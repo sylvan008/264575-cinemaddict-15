@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Олег Селин](https://up.htmlacademy.ru/ecmascript/15/user/264575).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Корякин](https://htmlacademy.ru/profile/alexeycorr).
 
 ---
 
