@@ -7,6 +7,8 @@ import {createPopup} from './view/popup.js';
 import {createFilmList} from './view/film-list.js';
 import {createFilmCard} from './view/film-card.js';
 import {createShowMoreButton} from './view/show-more.js';
+import {createComments} from './view/comments.js';
+import {createNewComment} from './view/new-comment.js';
 
 const CARDS_START_VIEW = 5;
 const CARDS_EXTRA_VIEW = 2;
@@ -69,3 +71,9 @@ render(commentMoviesList, viewExtraFilms);
 
 render(footerStatisticsElement, createFooterStatistics());
 render(footerElement, createPopup(), 'afterend');
+
+const filmDetailBottomContainer = document.querySelector('.film-details .film-details__bottom-container');
+render(filmDetailBottomContainer, createComments());
+
+const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
+render(commentsContainer, createNewComment());

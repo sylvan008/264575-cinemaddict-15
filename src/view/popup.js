@@ -1,5 +1,3 @@
-import {createComments} from './comments.js';
-
 export const createPopup = () => `
   <section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -73,9 +71,7 @@ export const createPopup = () => `
         </section>
       </div>
 
-      <div class="film-details__bottom-container">
-        ${createComments()}
-      </div>
+      <div class="film-details__bottom-container"></div>
     </form>
   </section>
 `;
