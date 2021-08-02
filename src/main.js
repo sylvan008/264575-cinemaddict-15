@@ -15,13 +15,13 @@ const films = {
   topRated: new Array (2).fill(null),
 };
 
-function render(container, template, place) {
+function render(container, template, place='beforeend') {
   container.insertAdjacentHTML(place, template);
 }
 
-render(headerElement, createUserProfile(), 'beforeend');
-render(mainElement, createMainNavigation(), 'beforeend');
-render(mainElement, createSortMenu(), 'beforeend');
-render(mainElement, createFilmsBoard(films), 'beforeend');
-render(footerStatisticsElement, createFooterStatistics(), 'beforeend');
+render(headerElement, createUserProfile());
+render(mainElement, createMainNavigation());
+render(mainElement, createSortMenu());
+render(mainElement, createFilmsBoard(films));
+render(footerStatisticsElement, createFooterStatistics());
 render(footerElement, createPopup(), 'afterend');
