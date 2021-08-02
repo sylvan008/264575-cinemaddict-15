@@ -44,9 +44,9 @@ const viewExtraFilms = films
   .map(createFilmCard)
   .join('');
 
-function render(container, template, place='beforeend') {
+const render = (container, template, place='beforeend') => {
   container.insertAdjacentHTML(place, template);
-}
+};
 
 render(headerElement, createUserProfile());
 render(mainElement, createMainNavigation());
