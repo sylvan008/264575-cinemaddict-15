@@ -29,6 +29,20 @@ const FilmListTypes = {
     isExtra: true,
   },
 };
+const CardControlTypes = [
+  {
+    classModifier: 'film-card__controls-item--add-to-watchlist',
+    text: 'Add to watchlist',
+  },
+  {
+    classModifier: 'film-card__controls-item--mark-as-watched',
+    text: 'Mark as watched',
+  },
+  {
+    classModifier: 'film-card__controls-item--favorite',
+    text: 'Mark as favorite',
+  },
+];
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -37,11 +51,11 @@ const footerStatisticsElement = footerElement.querySelector('.footer__statistics
 const films = new Array(5).fill(null);
 const viewAllFilms = films
   .slice(0, CARDS_START_VIEW)
-  .map(createFilmCard)
+  .map(() => createFilmCard(CardControlTypes))
   .join('');
 const viewExtraFilms = films
   .slice(0, CARDS_EXTRA_VIEW)
-  .map(createFilmCard)
+  .map(() => createFilmCard(CardControlTypes))
   .join('');
 
 const render = (container, template, place='beforeend') => {
