@@ -1,6 +1,6 @@
 import {createFilmCardControls} from './film-card-controls.js';
 
-export const createFilmCard = () => (`
+export const createFilmCard = () => `
   <article class="film-card">
     <h3 class="film-card__title">The Dance of Life</h3>
     <p class="film-card__rating">8.3</p>
@@ -14,4 +14,4 @@ export const createFilmCard = () => (`
     <a class="film-card__comments">5 comments</a>
     ${createFilmCardControls()}
   </article>
-`);
+`;
