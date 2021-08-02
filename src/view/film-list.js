@@ -1,11 +1,9 @@
-import {createFilmListContainer} from './film-list-container.js';
-
-export const createFilmList = (films) => (`
+export const createFilmList = () => `
   <section class="films-list">
     <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
 
-    ${createFilmListContainer(films)}
+    <div class="films-list__container"></div>
 
     <button class="films-list__show-more">Show more</button>
   </section>
-`);
+`;
