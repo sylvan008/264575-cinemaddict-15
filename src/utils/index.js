@@ -4,6 +4,11 @@ function getRandomInteger(a=0, b=1) {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 }
 
+function getRandomArrayElement(array) {
+  return array[getRandomInteger(0, array.length - 1)];
+}
+
 export {
-  getRandomInteger
+  getRandomInteger,
+  getRandomArrayElement
 };
