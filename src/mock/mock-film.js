@@ -1,25 +1,5 @@
-import dayjs from 'dayjs';
 import {getRandomInteger, getRandomArrayElement} from '../utils';
-
-const generateDescription = () => {
-  const sentences = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    'Cras aliquet varius magna, non porta ligula feugiat eget.',
-    'Fusce tristique felis at fermentum pharetra.',
-    'Aliquam id orci ut lectus varius viverra.',
-    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-    'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-    'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat.',
-    'Nunc fermentum tortor ac porta dapibus.',
-    'In rutrum ac purus sit amet tempus.',
-  ];
-  const descriptionLength = getRandomInteger(1, 5);
-  return new Array(descriptionLength)
-    .fill('')
-    .map(() => getRandomArrayElement(sentences))
-    .join(' ');
-};
+import {generateNames, generateDate, generateText} from './mock-helpers.js';
 
 const generatePoster = () => {
   const posters = [
@@ -82,33 +62,6 @@ const generateGenre = () => {
   return new Array(countGenres).fill().map(() => getRandomArrayElement(genres));
 };
 
-const generateDate = (fromYear=1970, toYear=2021) => {
-  const year = getRandomInteger(fromYear, toYear);
-  const month = getRandomInteger(1, 12);
-  const day = getRandomInteger(1, 31);
-  return dayjs(`${year}-${month}-${day}`).format();
-};
-
-const generateNames = (count=1) => {
-  const names = [
-    'Leanne Graham',
-    'Ervin Howell',
-    'Clementine Bauch',
-    'Patricia Lebsack',
-    'Chelsey Dietrich',
-    'Mrs. Dennis Schulist',
-    'Kurtis Weissnat',
-    'Nicholas Runolfsdottir V',
-    'Glenna Reichert',
-    'Clementina DuBuque',
-  ];
-  if (count === 1) {
-    return getRandomArrayElement(names);
-  }
-  const writersCount = getRandomInteger(1, count);
-  return new Array(writersCount).fill().map(() => getRandomArrayElement(names));
-};
-
 const generateCountry = () => {
   const country = ['USA', 'Russia', 'France', 'Germany', 'Japan', 'Finland', 'Norway'];
   return getRandomArrayElement(country);
@@ -132,6 +85,12 @@ const generateUserDetails = () => {
   };
 };
 
+const generateComments = (maxCommentsCount=5) => (
+  new Array(getRandomInteger(0, maxCommentsCount))
+    .fill()
+    .map(() => getRandomInteger(0, 100))
+);
+
 const generateFilm = () => {
   const [title, originalTitle] = generateTitle();
   return {
@@ -139,7 +98,7 @@ const generateFilm = () => {
       title,
       originalTitle,
       poster: generatePoster(),
-      description: generateDescription(),
+      description: generateText(),
       totalRating: generateRating(),
       runtime: getRandomInteger(60, 200),
       genre: generateGenre(),
@@ -152,7 +111,7 @@ const generateFilm = () => {
       actors: generateNames(3),
       ageRating: generateAgeRating(),
     },
-    comments: [1, 2],
+    comments: generateComments(),
     userDetails: generateUserDetails(),
   };
 };
