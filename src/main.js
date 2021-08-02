@@ -5,6 +5,25 @@ import {createFilmsBoard} from './view/films-board.js';
 import {createFooterStatistics} from './view/footer-statistics.js';
 import {createPopup} from './view/popup.js';
 
+const FilmListTypes = {
+  ALL_MOVIES: {
+    title: 'All movies. Upcoming',
+    isHidden: true,
+    isExtra: false,
+  },
+  TOP_MOVIES: {
+    title: 'Top rated',
+    isHidden: false,
+    isExtra: true,
+  },
+  COMMENTED_MOVIES: {
+    title: 'Most commented',
+    isHidden: false,
+    isExtra: true,
+  },
+};
+
+
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
 const footerElement = document.querySelector('.footer');
