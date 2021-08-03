@@ -32,20 +32,6 @@ const FilmListTypes = {
     isExtra: true,
   },
 };
-const CardControlTypes = [
-  {
-    classModifier: 'film-card__controls-item--add-to-watchlist',
-    text: 'Add to watchlist',
-  },
-  {
-    classModifier: 'film-card__controls-item--mark-as-watched',
-    text: 'Mark as watched',
-  },
-  {
-    classModifier: 'film-card__controls-item--favorite',
-    text: 'Mark as favorite',
-  },
-];
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -64,7 +50,7 @@ const renderFilmCards = (filmList, loadStep, target) => {
   for (let i = 0; i < Math.min(filmList.length, loadStep); i++) {
     const {filmInfo, comments} = filmList[i];
     const commentsCount = comments.length;
-    render(target, createFilmCard(CardControlTypes, filmInfo, commentsCount));
+    render(target, createFilmCard(filmInfo, commentsCount));
   }
 };
 

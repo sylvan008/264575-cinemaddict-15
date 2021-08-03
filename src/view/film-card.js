@@ -1,6 +1,21 @@
 import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 
-export const createFilmCard = (controlsTypes, filmInfo, commentsCount) => {
+const CardControlTypes = [
+  {
+    classModifier: 'film-card__controls-item--add-to-watchlist',
+    text: 'Add to watchlist',
+  },
+  {
+    classModifier: 'film-card__controls-item--mark-as-watched',
+    text: 'Mark as watched',
+  },
+  {
+    classModifier: 'film-card__controls-item--favorite',
+    text: 'Mark as favorite',
+  },
+];
+
+export const createFilmCard = (filmInfo, commentsCount) => {
   const {
     poster,
     title,
@@ -18,7 +33,7 @@ export const createFilmCard = (controlsTypes, filmInfo, commentsCount) => {
       </button>
     `;
   };
-  const controlsTemplate = controlsTypes.map(createControlItem).join('');
+  const controlsTemplate = CardControlTypes.map(createControlItem).join('');
   const shortDescription = description.length > 140 ? `${description.slice(0, 139)}…` : description;
   const year = getHumanizeDate(date, 'YYYY');
   const genres = genre.join(' ');
