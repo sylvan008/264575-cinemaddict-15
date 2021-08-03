@@ -48,9 +48,9 @@ const render = (container, template, place='beforeend') => {
 };
 const renderFilmCards = (filmList, loadStep, target) => {
   for (let i = 0; i < Math.min(filmList.length, loadStep); i++) {
-    const {filmInfo, comments} = filmList[i];
+    const {filmInfo, comments, userDetails} = filmList[i];
     const commentsCount = comments.length;
-    render(target, createFilmCard(filmInfo, commentsCount));
+    render(target, createFilmCard({filmInfo, commentsCount, userDetails}));
   }
 };
 

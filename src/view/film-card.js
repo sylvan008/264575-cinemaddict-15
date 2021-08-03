@@ -1,21 +1,28 @@
 import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 
+const CONTROL_WATCHLIST = 'watchlist';
+const CONTROL_WATCHED = 'watched';
+const CONTROL_FAVORITE = 'favorite';
+const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
 const CardControlTypes = [
   {
     classModifier: 'film-card__controls-item--add-to-watchlist',
     text: 'Add to watchlist',
+    type: CONTROL_WATCHLIST,
   },
   {
     classModifier: 'film-card__controls-item--mark-as-watched',
     text: 'Mark as watched',
+    type: CONTROL_WATCHED,
   },
   {
     classModifier: 'film-card__controls-item--favorite',
     text: 'Mark as favorite',
+    type: CONTROL_FAVORITE,
   },
 ];
 
-export const createFilmCard = (filmInfo, commentsCount) => {
+export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
   const {
     poster,
     title,
@@ -25,10 +32,12 @@ export const createFilmCard = (filmInfo, commentsCount) => {
     genre,
     description,
   } = filmInfo;
+
   const createControlItem = (item) => {
-    const {classModifier, text} = item;
+    const {classModifier, text, type} = item;
+    const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
     return `
-      <button class="film-card__controls-item ${classModifier}" type="button">
+      <button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
           ${text}
       </button>
     `;
