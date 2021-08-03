@@ -1,26 +1,34 @@
 import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import {FilmControlTypes} from '../utils/const.js';
 
-const CONTROL_WATCHLIST = 'watchlist';
-const CONTROL_WATCHED = 'watched';
-const CONTROL_FAVORITE = 'favorite';
+const DESCRIPTION_MAX_LENGTH = 140;
 const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
 const CardControlTypes = [
   {
     classModifier: 'film-card__controls-item--add-to-watchlist',
     text: 'Add to watchlist',
-    type: CONTROL_WATCHLIST,
+    type: FilmControlTypes.WATCHLIST,
   },
   {
     classModifier: 'film-card__controls-item--mark-as-watched',
     text: 'Mark as watched',
-    type: CONTROL_WATCHED,
+    type: FilmControlTypes.WATCHED,
   },
   {
     classModifier: 'film-card__controls-item--favorite',
     text: 'Mark as favorite',
-    type: CONTROL_FAVORITE,
+    type: FilmControlTypes.FAVORITE,
   },
 ];
+const createControlItem = ({classModifier, text, type}, userDetails) => {
+  const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
+  return `
+      <button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
+          ${text}
+      </button>
+    `;
+};
+const createGenreItem = (genre) => `<span class="film-card__genre">${genre}</span>`;
 
 export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
   const {
@@ -33,19 +41,12 @@ export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
     description,
   } = filmInfo;
 
-  const createControlItem = (item) => {
-    const {classModifier, text, type} = item;
-    const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
-    return `
-      <button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
-          ${text}
-      </button>
-    `;
-  };
-  const controlsTemplate = CardControlTypes.map(createControlItem).join('');
-  const shortDescription = description.length > 140 ? `${description.slice(0, 139)}…` : description;
+  const controlsTemplate = CardControlTypes.map((type) => createControlItem(type, userDetails)).join('');
+  const shortDescription = description.length > DESCRIPTION_MAX_LENGTH
+    ? `${description.slice(0, DESCRIPTION_MAX_LENGTH - 1)}…`
+    : description;
   const year = getHumanizeDate(date, 'YYYY');
-  const genres = genre.join(' ');
+  const genreTemplate = genre.map(createGenreItem).join('');
   const filmDuration = getHumanizeFilmDuration(runtime);
   return `
     <article class="film-card">
@@ -54,7 +55,7 @@ export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
         <span class="film-card__duration">${filmDuration}</span>
-        <span class="film-card__genre">${genres}</span>
+        ${genreTemplate}
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${shortDescription}</p>
