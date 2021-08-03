@@ -1,3 +1,7 @@
+import dayjs from 'dayjs';
+
+const HOUR = 60;
+
 function getRandomInteger(a=0, b=1) {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -8,7 +12,13 @@ function getRandomArrayElement(array) {
   return array[getRandomInteger(0, array.length - 1)];
 }
 
+const getHumanizeDate = (date, template='D YYYY') => dayjs(date).format(template);
+
+const getHumanizeFilmDuration = (runtime) => `${Math.floor(runtime / HOUR)}h ${runtime % HOUR}m`;
+
 export {
   getRandomInteger,
-  getRandomArrayElement
+  getRandomArrayElement,
+  getHumanizeDate,
+  getHumanizeFilmDuration
 };
