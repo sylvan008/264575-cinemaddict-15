@@ -9,9 +9,12 @@ import {createFilmCard} from './view/film-card.js';
 import {createShowMoreButton} from './view/show-more.js';
 import {createComments} from './view/comments.js';
 import {createNewComment} from './view/new-comment.js';
+import {generateFilm} from './mock/mock-film.js';
+import {generateComment} from './mock/mock-comment.js';
+import {sortFilmByComments, sortFilmByRating} from './utils';
 
-const CARDS_START_VIEW = 5;
-const CARDS_EXTRA_VIEW = 2;
+const CARDS_LOAD_STEP = 5;
+const CARDS_EXTRA_LOAD_STEP = 2;
 const FilmListTypes = {
   ALL_MOVIES: {
     title: 'All movies. Upcoming',
@@ -48,24 +51,27 @@ const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
 const footerElement = document.querySelector('.footer');
 const footerStatisticsElement = footerElement.querySelector('.footer__statistics');
-const films = new Array(5).fill(null);
-const viewAllFilms = films
-  .slice(0, CARDS_START_VIEW)
-  .map(() => createFilmCard(CardControlTypes))
-  .join('');
-const viewExtraFilms = films
-  .slice(0, CARDS_EXTRA_VIEW)
-  .map(() => createFilmCard(CardControlTypes))
-  .join('');
+
+const commentsData = new Array(100).fill().map(generateComment);
+const filmsData = new Array(22).fill().map(generateFilm);
+const topFilmsData = filmsData.slice().sort(sortFilmByRating);
+const commentsFilmsData = filmsData.slice().sort(sortFilmByComments);
 
 const render = (container, template, place='beforeend') => {
   container.insertAdjacentHTML(place, template);
+};
+const renderFilmCards = (filmList, loadStep, target) => {
+  for (let i = 0; i < Math.min(filmList.length, loadStep); i++) {
+    const {filmInfo, comments} = filmList[i];
+    const commentsCount = comments.length;
+    render(target, createFilmCard(CardControlTypes, filmInfo, commentsCount));
+  }
 };
 
 render(headerElement, createUserProfile());
 render(mainElement, createMainNavigation());
 render(mainElement, createSortMenu());
-render(mainElement, createFilmsBoard(films));
+render(mainElement, createFilmsBoard(filmsData));
 
 const filmBoard = document.querySelector('.films');
 render(filmBoard, createFilmList(FilmListTypes.ALL_MOVIES));
@@ -78,9 +84,9 @@ render(filmBoard, createFilmList(FilmListTypes.COMMENTED_MOVIES));
 
 const allMoviesList = allMovieSection.querySelector('.films-list__container');
 const [topMoviesList, commentMoviesList] = filmBoard.querySelectorAll('.films-list--extra .films-list__container');
-render(allMoviesList, viewAllFilms);
-render(topMoviesList, viewExtraFilms);
-render(commentMoviesList, viewExtraFilms);
+renderFilmCards(filmsData, CARDS_LOAD_STEP, allMoviesList);
+renderFilmCards(topFilmsData, CARDS_EXTRA_LOAD_STEP, topMoviesList);
+renderFilmCards(commentsFilmsData, CARDS_EXTRA_LOAD_STEP, commentMoviesList);
 
 
 render(footerStatisticsElement, createFooterStatistics());
