@@ -16,9 +16,23 @@ const getHumanizeDate = (date, template='D YYYY') => dayjs(date).format(template
 
 const getHumanizeFilmDuration = (runtime) => `${Math.floor(runtime / HOUR)}h ${runtime % HOUR}m`;
 
+const sortFilmByRating = (filmA, filmB) => {
+  const totalRatingA = filmA.filmInfo.totalRating;
+  const totalRatingB = filmB.filmInfo.totalRating;
+  return totalRatingB - totalRatingA;
+};
+
+const sortFilmByComments = (filmA, filmB) => {
+  const commentsCountA = filmA.comments.length;
+  const commentsCountB = filmB.comments.length;
+  return commentsCountB - commentsCountA;
+};
+
 export {
   getRandomInteger,
   getRandomArrayElement,
   getHumanizeDate,
-  getHumanizeFilmDuration
+  getHumanizeFilmDuration,
+  sortFilmByRating,
+  sortFilmByComments
 };
