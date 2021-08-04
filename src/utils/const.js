@@ -6,7 +6,15 @@ const FilmControlTypes = {
   FAVORITE: 'favorite',
 };
 
+const NavigationTypes = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
+};
+
 export {
   emotions,
-  FilmControlTypes
+  FilmControlTypes,
+  NavigationTypes
 };

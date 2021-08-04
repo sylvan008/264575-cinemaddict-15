@@ -12,6 +12,7 @@ import {createNewComment} from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
 import {getRandomInteger, sortFilmByComments, sortFilmByRating} from './utils';
+import {NavigationTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
@@ -32,6 +33,36 @@ const FilmListTypes = {
     isExtra: true,
   },
 };
+const navigationItems = [
+  {
+    type: NavigationTypes.ALL,
+    link: `#${NavigationTypes.ALL}`,
+    text: 'All movies',
+    isActive: true,
+    isCalculated: false,
+  },
+  {
+    type: NavigationTypes.WATCHLIST,
+    link: `#${NavigationTypes.WATCHLIST}`,
+    text: 'Watchlist',
+    isActive: false,
+    isCalculated: true,
+  },
+  {
+    type: NavigationTypes.HISTORY,
+    link: `#${NavigationTypes.HISTORY}`,
+    text: 'History',
+    isActive: false,
+    isCalculated: true,
+  },
+  {
+    type: NavigationTypes.FAVORITES,
+    link: `#${NavigationTypes.FAVORITES}`,
+    text: 'Favorites',
+    isActive: false,
+    isCalculated: true,
+  },
+];
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -45,6 +76,14 @@ const commentsFilmsData = filmsData.slice().sort(sortFilmByComments);
 const selectedMovie = filmsData[getRandomInteger(0, filmsData.length - 1)];
 const selectedMovieComments = selectedMovie.comments
   .map((movieCommentId) => commentsData.find(({id}) => id === movieCommentId));
+const countUserStatistic = (filmsList, propertyName) => (
+  filmsList.reduce((acc, {userDetails}) => acc + Number(userDetails[propertyName]), 0)
+);
+const navigationStatistics = {
+  [NavigationTypes.WATCHLIST]: countUserStatistic(filmsData,'watchlist'),
+  [NavigationTypes.HISTORY]: countUserStatistic(filmsData, 'alreadyWatched'),
+  [NavigationTypes.FAVORITES]: countUserStatistic(filmsData, 'favorite'),
+};
 
 const render = (container, template, place='beforeend') => {
   container.insertAdjacentHTML(place, template);
@@ -58,7 +97,7 @@ const renderFilmCards = (filmList, loadStep, target) => {
 };
 
 render(headerElement, createUserProfile());
-render(mainElement, createMainNavigation());
+render(mainElement, createMainNavigation({navigationItems, navigationStatistics}));
 render(mainElement, createSortMenu());
 render(mainElement, createFilmsBoard(filmsData));
 
