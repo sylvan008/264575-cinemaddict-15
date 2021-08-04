@@ -1,7 +1,15 @@
-export const createSortMenu = () => `
-  <ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-    <li><a href="#" class="sort__button">Sort by date</a></li>
-    <li><a href="#" class="sort__button">Sort by rating</a></li>
-  </ul>
-`;
+const ITEM_ACTIVE_CLASS = 'sort__button--active';
+
+const createSortItem = ({text, isActive}) => {
+  const activeClass = isActive ? ITEM_ACTIVE_CLASS : '';
+  return `<li><a href="#" class="sort__button ${activeClass}">${text}</a></li>`;
+};
+
+export const createSortMenu = (sortItems) => {
+  const sortItemsTemplate = sortItems.map(createSortItem).join('');
+  return `
+    <ul class="sort">
+      ${sortItemsTemplate}
+    </ul>
+  `;
+};

@@ -12,7 +12,7 @@ import {createNewComment} from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
 import {getRandomInteger, sortFilmByComments, sortFilmByRating} from './utils';
-import {NavigationTypes} from './utils/const.js';
+import {NavigationTypes, SortTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
@@ -63,6 +63,23 @@ const navigationItems = [
     isCalculated: true,
   },
 ];
+const sortItems = [
+  {
+    type: SortTypes.DEFAULT,
+    text: 'Sort by default',
+    isActive: true,
+  },
+  {
+    type: SortTypes.DATE,
+    text: 'Sort by date',
+    isActive: false,
+  },
+  {
+    type: SortTypes.RATING,
+    text: 'Sort by rating',
+    isActive: false,
+  },
+];
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -98,7 +115,7 @@ const renderFilmCards = (filmList, loadStep, target) => {
 
 render(headerElement, createUserProfile());
 render(mainElement, createMainNavigation({navigationItems, navigationStatistics}));
-render(mainElement, createSortMenu());
+render(mainElement, createSortMenu(sortItems));
 render(mainElement, createFilmsBoard(filmsData));
 
 const filmBoard = document.querySelector('.films');

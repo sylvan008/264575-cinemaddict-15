@@ -13,8 +13,15 @@ const NavigationTypes = {
   FAVORITES: 'favorites',
 };
 
+const SortTypes = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
 export {
   emotions,
   FilmControlTypes,
-  NavigationTypes
+  NavigationTypes,
+  SortTypes
 };
