@@ -11,7 +11,7 @@ import {createComments} from './view/comments.js';
 import {createNewComment} from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
-import {sortFilmByComments, sortFilmByRating} from './utils';
+import {getRandomInteger, sortFilmByComments, sortFilmByRating} from './utils';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
@@ -42,6 +42,9 @@ const commentsData = new Array(100).fill().map(generateComment);
 const filmsData = new Array(22).fill().map(generateFilm);
 const topFilmsData = filmsData.slice().sort(sortFilmByRating);
 const commentsFilmsData = filmsData.slice().sort(sortFilmByComments);
+const selectedMovie = filmsData[getRandomInteger(0, filmsData.length - 1)];
+const selectedMovieComments = selectedMovie.comments
+  .map((movieCommentId) => commentsData.find(({id}) => id === movieCommentId));
 
 const render = (container, template, place='beforeend') => {
   container.insertAdjacentHTML(place, template);
@@ -76,10 +79,10 @@ renderFilmCards(commentsFilmsData, CARDS_EXTRA_LOAD_STEP, commentMoviesList);
 
 
 render(footerStatisticsElement, createFooterStatistics());
-render(footerElement, createPopup(), 'afterend');
+render(footerElement, createPopup({...selectedMovie}), 'afterend');
 
 const filmDetailBottomContainer = document.querySelector('.film-details .film-details__bottom-container');
-render(filmDetailBottomContainer, createComments());
+render(filmDetailBottomContainer, createComments(selectedMovieComments));
 
 const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
 render(commentsContainer, createNewComment());
