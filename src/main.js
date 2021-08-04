@@ -77,8 +77,8 @@ renderFilmCards(filmsData, CARDS_LOAD_STEP, allMoviesList);
 renderFilmCards(topFilmsData, CARDS_EXTRA_LOAD_STEP, topMoviesList);
 renderFilmCards(commentsFilmsData, CARDS_EXTRA_LOAD_STEP, commentMoviesList);
 
-
-render(footerStatisticsElement, createFooterStatistics());
+const filmsCount = filmsData.length;
+render(footerStatisticsElement, createFooterStatistics(filmsCount));
 render(footerElement, createPopup({...selectedMovie}), 'afterend');
 
 const filmDetailBottomContainer = document.querySelector('.film-details .film-details__bottom-container');
