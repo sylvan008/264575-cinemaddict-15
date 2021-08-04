@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime.js';
 
 const HOUR = 60;
+const BREAKDOWN_RANGE_DAY = 'day';
+
+dayjs.extend(relativeTime);
 
 function getRandomInteger(a=0, b=1) {
   const lower = Math.ceil(Math.min(a, b));
@@ -15,6 +19,9 @@ function getRandomArrayElement(array) {
 const getHumanizeDate = (date, template='D YYYY') => dayjs(date).format(template);
 
 const getHumanizeFilmDuration = (runtime) => `${Math.floor(runtime / HOUR)}h ${runtime % HOUR}m`;
+
+const getRelativeDate = (date) => dayjs(date).fromNow();
+const getDateDifferenceFromNow = (date, breakdownRange=BREAKDOWN_RANGE_DAY) => dayjs().diff(date, breakdownRange);
 
 const sortFilmByRating = (filmA, filmB) => {
   const totalRatingA = filmA.filmInfo.totalRating;
@@ -34,5 +41,7 @@ export {
   getHumanizeDate,
   getHumanizeFilmDuration,
   sortFilmByRating,
-  sortFilmByComments
+  sortFilmByComments,
+  getRelativeDate,
+  getDateDifferenceFromNow
 };
