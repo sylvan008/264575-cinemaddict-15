@@ -1,6 +1,7 @@
 import {emotions} from '../utils/const.js';
 import {getRandomArrayElement} from '../utils';
 import {generateNames, generateDate, generateText} from './mock-helpers.js';
+import dayjs from 'dayjs';
 
 const generateEmotion = () => (getRandomArrayElement(emotions));
 
@@ -19,13 +20,23 @@ const createIdGenerator = (numberId=100) => {
 
 const generateId = createIdGenerator();
 
-const generateComment = () => ({
-  id: generateId(),
-  author: generateNames(),
-  comment: generateText(3),
-  date: generateDate(2019, 2021),
-  emotion: generateEmotion(),
-});
+const generateComment = () => {
+  const now = dayjs();
+  const nowYear = now.year();
+  const nowMonth = now.month() + 1;
+  const dayNow = now.date();
+  return {
+    id: generateId(),
+    author: generateNames(),
+    comment: generateText(3),
+    date: generateDate(
+      [nowYear, nowYear],
+      [nowMonth, nowMonth],
+      [now.subtract(3, 'day').date(), dayNow],
+    ),
+    emotion: generateEmotion(),
+  };
+};
 
 export {
   generateComment

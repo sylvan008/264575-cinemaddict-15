@@ -1,10 +1,10 @@
 import {getRandomArrayElement, getRandomInteger} from '../utils';
 import dayjs from 'dayjs';
 
-const generateDate = (fromYear=1970, toYear=2021) => {
-  const year = getRandomInteger(fromYear, toYear);
-  const month = getRandomInteger(1, 12);
-  const day = getRandomInteger(1, 31);
+const generateDate = (rangeYears=[1970, 2021], rangeMonths=[1, 12], rangeDays=[1, 31]) => {
+  const year = getRandomInteger(...rangeYears);
+  const month = getRandomInteger(...rangeMonths);
+  const day = getRandomInteger(...rangeDays);
   return dayjs(`${year}-${month}-${day}`).format();
 };
 

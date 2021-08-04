@@ -1,5 +1,6 @@
 import {getRandomInteger, getRandomArrayElement} from '../utils';
 import {generateNames, generateDate, generateText} from './mock-helpers.js';
+import dayjs from 'dayjs';
 
 const generatePoster = () => {
   const posters = [
@@ -75,7 +76,7 @@ const generateAgeRating = () => {
 const generateUserDetails = () => {
   const watchlist = Boolean(getRandomInteger());
   const alreadyWatched = Boolean(getRandomInteger());
-  const watchingDate = alreadyWatched ? generateDate(1990) : null;
+  const watchingDate = alreadyWatched ? generateDate([1990, dayjs().year()]) : null;
   const favorite = Boolean(getRandomInteger());
   return {
     watchlist,
