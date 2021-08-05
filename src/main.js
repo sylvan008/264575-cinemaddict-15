@@ -96,10 +96,13 @@ const selectedMovieComments = selectedMovie.comments
 const countUserStatistic = (filmsList, propertyName) => (
   filmsList.reduce((acc, {userDetails}) => acc + Number(userDetails[propertyName]), 0)
 );
+const watchlistFilmsCount = countUserStatistic(filmsData,'watchlist');
+const watchedFilmsCount = countUserStatistic(filmsData, 'alreadyWatched');
+const favoriteFilmsCount = countUserStatistic(filmsData, 'favorite');
 const navigationStatistics = {
-  [NavigationTypes.WATCHLIST]: countUserStatistic(filmsData,'watchlist'),
-  [NavigationTypes.HISTORY]: countUserStatistic(filmsData, 'alreadyWatched'),
-  [NavigationTypes.FAVORITES]: countUserStatistic(filmsData, 'favorite'),
+  [NavigationTypes.WATCHLIST]: watchlistFilmsCount,
+  [NavigationTypes.HISTORY]: watchedFilmsCount,
+  [NavigationTypes.FAVORITES]: favoriteFilmsCount,
 };
 
 const render = (container, template, place='beforeend') => {
@@ -113,7 +116,7 @@ const renderFilmCards = (filmList, loadStep, target) => {
   }
 };
 
-render(headerElement, createUserProfile());
+render(headerElement, createUserProfile(watchedFilmsCount));
 render(mainElement, createMainNavigation({navigationItems, navigationStatistics}));
 render(mainElement, createSortMenu(sortItems));
 render(mainElement, createFilmsBoard(filmsData));
