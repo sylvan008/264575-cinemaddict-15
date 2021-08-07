@@ -16,36 +16,6 @@ import {NavigationTypes, SortTypes, FilmListTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
-const navigationItems = [
-  {
-    type: NavigationTypes.ALL,
-    link: `#${NavigationTypes.ALL}`,
-    text: 'All movies',
-    isActive: true,
-    isCalculated: false,
-  },
-  {
-    type: NavigationTypes.WATCHLIST,
-    link: `#${NavigationTypes.WATCHLIST}`,
-    text: 'Watchlist',
-    isActive: false,
-    isCalculated: true,
-  },
-  {
-    type: NavigationTypes.HISTORY,
-    link: `#${NavigationTypes.HISTORY}`,
-    text: 'History',
-    isActive: false,
-    isCalculated: true,
-  },
-  {
-    type: NavigationTypes.FAVORITES,
-    link: `#${NavigationTypes.FAVORITES}`,
-    text: 'Favorites',
-    isActive: false,
-    isCalculated: true,
-  },
-];
 const sortItems = [
   {
     type: SortTypes.DEFAULT,
@@ -101,7 +71,7 @@ const renderFilmCards = (filmList, loadStep, target, startPosition=0) => {
 };
 
 render(headerElement, createUserProfile(watchedFilmsCount));
-render(mainElement, createMainNavigation({navigationItems, navigationStatistics}));
+render(mainElement, createMainNavigation(navigationStatistics));
 render(mainElement, createSortMenu(sortItems));
 render(mainElement, createFilmsBoard(filmsData));
 
