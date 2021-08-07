@@ -12,27 +12,10 @@ import {createNewComment} from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
 import {getRandomInteger, sortFilmByComments, sortFilmByRating} from './utils';
-import {NavigationTypes, SortTypes} from './utils/const.js';
+import {NavigationTypes, SortTypes, FilmListTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
-const FilmListTypes = {
-  ALL_MOVIES: {
-    title: 'All movies. Upcoming',
-    isHidden: true,
-    isExtra: false,
-  },
-  TOP_MOVIES: {
-    title: 'Top rated',
-    isHidden: false,
-    isExtra: true,
-  },
-  COMMENTED_MOVIES: {
-    title: 'Most commented',
-    isHidden: false,
-    isExtra: true,
-  },
-};
 const navigationItems = [
   {
     type: NavigationTypes.ALL,
