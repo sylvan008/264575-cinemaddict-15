@@ -1,28 +1,67 @@
-export const createFilmCard = (controlsTypes) => {
-  const createControlItem = (item) => {
-    const {classModifier, text} = item;
-    return `
-      <button class="film-card__controls-item ${classModifier}" type="button">
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import {FilmControlTypes} from '../utils/const.js';
+
+const DESCRIPTION_MAX_LENGTH = 140;
+const DESCRIPTION_PREVIEW_LENGTH = 139;
+const DATE_YEAR = 'YYYY';
+const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
+const CardControlTypes = [
+  {
+    classModifier: 'film-card__controls-item--add-to-watchlist',
+    text: 'Add to watchlist',
+    type: FilmControlTypes.WATCHLIST,
+  },
+  {
+    classModifier: 'film-card__controls-item--mark-as-watched',
+    text: 'Mark as watched',
+    type: FilmControlTypes.WATCHED,
+  },
+  {
+    classModifier: 'film-card__controls-item--favorite',
+    text: 'Mark as favorite',
+    type: FilmControlTypes.FAVORITE,
+  },
+];
+const createControlItem = ({classModifier, text, type}, userDetails) => {
+  const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
+  return `
+      <button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
           ${text}
       </button>
     `;
-  };
-  const controlsTemplate = controlsTypes.map(createControlItem).join('');
+};
+
+export const createFilmCard = (filmDetail) => {
+  const {filmInfo, userDetails, comments} = filmDetail;
+  const commentsCount = comments.length;
+  const {
+    poster,
+    title,
+    totalRating,
+    release: {date},
+    runtime,
+    genre,
+    description,
+  } = filmInfo;
+
+  const shortDescription = description.length > DESCRIPTION_MAX_LENGTH
+    ? `${description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}…`
+    : description;
   return `
     <article class="film-card">
-      <h3 class="film-card__title">The Dance of Life</h3>
-      <p class="film-card__rating">8.3</p>
+      <h3 class="film-card__title">${title}</h3>
+      <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">1929</span>
-        <span class="film-card__duration">1h 55m</span>
-        <span class="film-card__genre">Musical</span>
+        <span class="film-card__year">${getHumanizeDate(date, DATE_YEAR)}</span>
+        <span class="film-card__duration">${getHumanizeFilmDuration(runtime)}</span>
+        ${genre.map((item) => `<span class="film-card__genre">${item}</span>`).join('')}
       </p>
-      <img src="./images/posters/the-dance-of-life.jpg" alt="" class="film-card__poster">
-      <p class="film-card__description">Burlesque comic Ralph "Skid" Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold, rainy night at a tr…</p>
-      <a class="film-card__comments">5 comments</a>
+      <img src="${poster}" alt="" class="film-card__poster">
+      <p class="film-card__description">${shortDescription}</p>
+      <a class="film-card__comments">${commentsCount} comments</a>
 
       <div class="film-card__controls">
-        ${controlsTemplate}
+        ${CardControlTypes.map((type) => createControlItem(type, userDetails)).join('')}
       </div>
     </article>
   `;
