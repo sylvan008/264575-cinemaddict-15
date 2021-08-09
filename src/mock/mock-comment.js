@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 const generateEmotion = () => (getRandomArrayElement(emotions));
 
-const createIdGenerator = (numberId=100) => {
+const createIdGenerator = (numberId = 100) => {
   const idList = [];
   for (let i = 1; i <= numberId; i++) {
     idList.push(i);

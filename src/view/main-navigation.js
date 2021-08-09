@@ -36,20 +36,19 @@ const createItemCount = (count) => `<span class="main-navigation__item-count">${
 
 const createNavigationItem = ({type, link, text, isActive, isCalculated}, navigationStatistics) => {
   const activeClass = isActive ? NAVIGATION_ACTIVE_CLASS : '';
-  const countTemplate = isCalculated ? createItemCount(navigationStatistics[type]) : '';
-  return `<a href="${link}" class="main-navigation__item ${activeClass}">${text} ${countTemplate}</a>`;
+  return `
+    <a href="${link}" class="main-navigation__item ${activeClass}">
+      ${text}
+      ${isCalculated ? createItemCount(navigationStatistics[type]) : ''}
+    </a>
+  `;
 };
 
-export const createMainNavigation = (navigationStatistics) => {
-  const navigationItemsTemplate = navigationItems
-    .map((navItem) => createNavigationItem(navItem, navigationStatistics))
-    .join('');
-  return `
+export const createMainNavigation = (navigationStatistics) => `
     <nav class="main-navigation">
       <div class="main-navigation__items">
-        ${navigationItemsTemplate}
+        ${navigationItems.map((navItem) => createNavigationItem(navItem, navigationStatistics)).join('')}
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
     </nav>
 `;
-};

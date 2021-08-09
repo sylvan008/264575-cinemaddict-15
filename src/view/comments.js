@@ -1,7 +1,7 @@
 import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
 
 const COMMENT_TODAY = 'Today';
-const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD/ hh:mm';
+const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';
 
 const getCommentDate = (date, dayDifference) => {
   switch(dayDifference) {
@@ -34,16 +34,13 @@ const createCommentItem = ({author, comment, date, emotion}) => {
   `;
 };
 
-export const createComments = (comments=[]) => {
-  const commentsCount = comments.length;
-  const commentsListTemplate = comments.map(createCommentItem).join('');
-  return `
+export const createComments = (comments = []) =>
+  `
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
       <ul class="film-details__comments-list">
-        ${commentsListTemplate}
+        ${comments.map(createCommentItem).join('')}
       </ul>
     </section>
   `;
-};

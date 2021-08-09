@@ -6,7 +6,7 @@ const BREAKDOWN_RANGE_DAY = 'day';
 
 dayjs.extend(relativeTime);
 
-function getRandomInteger(a=0, b=1) {
+function getRandomInteger(a = 0, b = 1) {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
   return Math.floor(lower + Math.random() * (upper - lower + 1));
@@ -16,7 +16,7 @@ function getRandomArrayElement(array) {
   return array[getRandomInteger(0, array.length - 1)];
 }
 
-const getHumanizeDate = (date, template='D YYYY') => dayjs(date).format(template);
+const getHumanizeDate = (date, template = 'D YYYY') => dayjs(date).format(template);
 
 const getHumanizeFilmDuration = (runtime) => `${Math.floor(runtime / HOUR)}h ${runtime % HOUR}m`;
 

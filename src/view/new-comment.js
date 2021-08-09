@@ -7,17 +7,16 @@ const createEmojiItem = (emoji) => `
   </label>
 `;
 
-export const createNewComment = () => {
-  const emojiListTemplate = emotions.map(createEmojiItem).join('');
-  return `
-    <div class="film-details__new-comment">
-      <div class="film-details__add-emoji-label"></div>
+export const createNewComment = () => `
+  <div class="film-details__new-comment">
+    <div class="film-details__add-emoji-label"></div>
 
-      <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-      </label>
+    <label class="film-details__comment-label">
+      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+    </label>
 
-      <div class="film-details__emoji-list">${emojiListTemplate}</div>
+    <div class="film-details__emoji-list">
+      ${emotions.map(createEmojiItem).join('')}
     </div>
-  `;
-};
+  </div>
+`;

@@ -24,11 +24,8 @@ const createSortItem = ({text, isActive}) => {
   return `<li><a href="#" class="sort__button ${activeClass}">${text}</a></li>`;
 };
 
-export const createSortMenu = () => {
-  const sortItemsTemplate = sortItems.map(createSortItem).join('');
-  return `
-    <ul class="sort">
-      ${sortItemsTemplate}
-    </ul>
-  `;
-};
+export const createSortMenu = () => `
+  <ul class="sort">
+    ${sortItems.map(createSortItem).join('')}
+  </ul>
+`;

@@ -2,6 +2,7 @@ import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
 
 const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
+const DATE_TEMPLATE = 'D MMMM YYYY';
 const filmDetailControlTypes = [
   {
     classModifier: 'film-details__control-button--watchlist',
@@ -19,6 +20,7 @@ const filmDetailControlTypes = [
     type: FilmControlTypes.FAVORITE,
   },
 ];
+
 const createGenreItem = (genre) => `<span class="film-details__genre">${genre}</span>`;
 const createControlButton = ({classModifier, text, type}, userDetails) => {
   const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
@@ -28,6 +30,55 @@ const createControlButton = ({classModifier, text, type}, userDetails) => {
     </button>
   `;
 };
+const tableDetailsModel = [
+  {
+    title: 'Director',
+    key: 'director',
+  },
+  {
+    title: 'Writers',
+    key: 'writers',
+    handler: (writers) => writers.join(', '),
+  },
+  {
+    title: 'Actors',
+    key: 'actors',
+    handler: (actors) => actors.join(', '),
+  },
+  {
+    title: 'Release Date',
+    key: 'date',
+    handler: (date) => getHumanizeDate(date, DATE_TEMPLATE),
+  },
+  {
+    title: 'Country',
+    key: 'release.country',
+  },
+  {
+    title: 'Runtime',
+    key: 'runtime',
+    handler: (runtime) => getHumanizeFilmDuration(runtime),
+  },
+  {
+    title: 'Genres',
+    key: 'genre',
+    handler: (genres) => genres.map(createGenreItem),
+  },
+];
+
+const createTableTemplate = (tableModel, tableInfo) =>
+  tableModel.map((model) => {
+    const {title, key, handler} = model;
+    const value = typeof handler === 'function'
+      ? handler(tableInfo[key])
+      : tableInfo[key];
+    return `
+      <tr class="film-details__row">
+        <td class="film-details__term">${title}</td>
+        <td class="film-details__cell">${value}</td>
+      </tr>
+    `;
+  }).join('');
 
 export const createPopup = ({filmInfo, userDetails}) => {
   const {
@@ -36,21 +87,19 @@ export const createPopup = ({filmInfo, userDetails}) => {
     originalTitle,
     totalRating,
     ageRating,
-    director,
-    writers,
-    actors,
-    release,
-    runtime,
-    genre,
     description,
   } = filmInfo;
 
-  const writersStr = writers.join(', ');
-  const actorsStr = actors.join(', ');
-  const releaseDate = getHumanizeDate(release.date, 'D MMMM YYYY');
-  const releaseCountry = release.country;
-  const filmDuration = getHumanizeFilmDuration(runtime);
-  const genreTemplate = genre.map(createGenreItem).join('');
+  const tableInfo = {
+    director: filmInfo.director,
+    writers: filmInfo.writers,
+    actors: filmInfo.actors,
+    date: filmInfo.release.date,
+    country: filmInfo.release.country,
+    runtime: filmInfo.runtime,
+    genre: filmInfo.genre,
+  };
+
   const filmDetailControlTemplate = filmDetailControlTypes
     .map((type) => createControlButton(type, userDetails))
     .join('');
@@ -81,34 +130,7 @@ export const createPopup = ({filmInfo, userDetails}) => {
             </div>
 
             <table class="film-details__table">
-              <tr class="film-details__row">
-                <td class="film-details__term">Director</td>
-                <td class="film-details__cell">${director}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${writersStr}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${actorsStr}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${releaseDate}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${filmDuration}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Country</td>
-                <td class="film-details__cell">${releaseCountry}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
-                <td class="film-details__cell">${genreTemplate}</td>
-              </tr>
+              ${createTableTemplate(tableDetailsModel, tableInfo)}
             </table>
 
             <p class="film-details__film-description">${description}</p>

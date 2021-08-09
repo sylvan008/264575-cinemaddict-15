@@ -2,6 +2,8 @@ import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
 
 const DESCRIPTION_MAX_LENGTH = 140;
+const DESCRIPTION_PREVIEW_LENGTH = 139;
+const DATE_YEAR = 'YYYY';
 const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
 const CardControlTypes = [
   {
@@ -28,9 +30,10 @@ const createControlItem = ({classModifier, text, type}, userDetails) => {
       </button>
     `;
 };
-const createGenreItem = (genre) => `<span class="film-card__genre">${genre}</span>`;
 
-export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
+export const createFilmCard = (filmDetail) => {
+  const {filmInfo, userDetails, comments} = filmDetail;
+  const commentsCount = comments.length;
   const {
     poster,
     title,
@@ -41,28 +44,24 @@ export const createFilmCard = ({filmInfo, commentsCount, userDetails}) => {
     description,
   } = filmInfo;
 
-  const controlsTemplate = CardControlTypes.map((type) => createControlItem(type, userDetails)).join('');
   const shortDescription = description.length > DESCRIPTION_MAX_LENGTH
-    ? `${description.slice(0, DESCRIPTION_MAX_LENGTH - 1)}…`
+    ? `${description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}…`
     : description;
-  const year = getHumanizeDate(date, 'YYYY');
-  const genreTemplate = genre.map(createGenreItem).join('');
-  const filmDuration = getHumanizeFilmDuration(runtime);
   return `
     <article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${year}</span>
-        <span class="film-card__duration">${filmDuration}</span>
-        ${genreTemplate}
+        <span class="film-card__year">${getHumanizeDate(date, DATE_YEAR)}</span>
+        <span class="film-card__duration">${getHumanizeFilmDuration(runtime)}</span>
+        ${genre.map((item) => `<span class="film-card__genre">${item}</span>`).join('')}
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${shortDescription}</p>
       <a class="film-card__comments">${commentsCount} comments</a>
 
       <div class="film-card__controls">
-        ${controlsTemplate}
+        ${CardControlTypes.map((type) => createControlItem(type, userDetails)).join('')}
       </div>
     </article>
   `;
