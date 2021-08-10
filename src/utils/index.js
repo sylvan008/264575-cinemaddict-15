@@ -36,11 +36,7 @@ const sortFilmByComments = (filmA, filmB) => {
   return commentsCountB - commentsCountA;
 };
 
-const render = (container, template, place = RenderPosition.BEFOREEND) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-const renderElement = (container, element, place = RenderPosition.BEFOREEND) => {
+const render = (container, element, place = RenderPosition.BEFOREEND) => {
   switch (place) {
     case RenderPosition.BEFOREEND:
       container.append(element);
@@ -58,7 +54,6 @@ const createElement = (template) => {
 
 export {
   render,
-  renderElement,
   createElement,
   getRandomInteger,
   getRandomArrayElement,
