@@ -1,4 +1,4 @@
-import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
+import {createElement, getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
 
 const COMMENT_TODAY = 'Today';
 const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';
@@ -34,13 +34,32 @@ const createCommentItem = ({author, comment, date, emotion}) => {
   `;
 };
 
-export const createComments = (comments = []) =>
-  `
-    <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+export default class Comments {
+  constructor(comments) {
+    this._comments = comments;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
       <ul class="film-details__comments-list">
-        ${comments.map(createCommentItem).join('')}
+        ${this._comments.map(createCommentItem).join('')}
       </ul>
     </section>
   `;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

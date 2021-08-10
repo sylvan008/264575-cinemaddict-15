@@ -1,3 +1,4 @@
+import {createElement} from '../utils';
 import {NavigationTypes} from '../utils/const.js';
 
 const NAVIGATION_ACTIVE_CLASS = 'main-navigation__item--active';
@@ -44,11 +45,30 @@ const createNavigationItem = ({type, link, text, isActive, isCalculated}, naviga
   `;
 };
 
-export const createMainNavigation = (navigationStatistics) => `
-    <nav class="main-navigation">
+export default class MainNavigation {
+  constructor(statistics) {
+    this._statistics = statistics;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<nav class="main-navigation">
       <div class="main-navigation__items">
-        ${navigationItems.map((navItem) => createNavigationItem(navItem, navigationStatistics)).join('')}
+        ${navigationItems.map((navItem) => createNavigationItem(navItem, this._statistics)).join('')}
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
-    </nav>
-`;
+    </nav>`;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

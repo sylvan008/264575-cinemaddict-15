@@ -1,4 +1,4 @@
-import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import {createElement, getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
 
 const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
@@ -80,7 +80,7 @@ const createTableTemplate = (tableModel, tableInfo) =>
     `;
   }).join('');
 
-export const createPopup = ({filmInfo, userDetails}) => {
+export const createPopupTemplate = ({filmInfo, userDetails}) => {
   const {
     poster,
     title,
@@ -103,8 +103,7 @@ export const createPopup = ({filmInfo, userDetails}) => {
   const filmDetailControlTemplate = filmDetailControlTypes
     .map((type) => createControlButton(type, userDetails))
     .join('');
-  return `
-  <section class="film-details">
+  return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
         <div class="film-details__close">
@@ -145,3 +144,26 @@ export const createPopup = ({filmInfo, userDetails}) => {
   </section>
 `;
 };
+
+export default class Popup {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopupTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

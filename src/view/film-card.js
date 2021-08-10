@@ -1,4 +1,4 @@
-import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import {createElement, getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
 
 const DESCRIPTION_MAX_LENGTH = 140;
@@ -22,16 +22,16 @@ const CardControlTypes = [
     type: FilmControlTypes.FAVORITE,
   },
 ];
+
 const createControlItem = ({classModifier, text, type}, userDetails) => {
   const activeClass = userDetails[type] ? CONTROL_ACTIVE_CLASS : '';
-  return `
-      <button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
+  return `<button class="film-card__controls-item ${classModifier} ${activeClass}" type="button">
           ${text}
       </button>
     `;
 };
 
-export const createFilmCard = (filmDetail) => {
+const createFilmCardTemplate = (filmDetail) => {
   const {filmInfo, userDetails, comments} = filmDetail;
   const commentsCount = comments.length;
   const {
@@ -47,8 +47,7 @@ export const createFilmCard = (filmDetail) => {
   const shortDescription = description.length > DESCRIPTION_MAX_LENGTH
     ? `${description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}…`
     : description;
-  return `
-    <article class="film-card">
+  return `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
@@ -66,3 +65,26 @@ export const createFilmCard = (filmDetail) => {
     </article>
   `;
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
