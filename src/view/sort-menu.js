@@ -1,3 +1,4 @@
+import {createElement} from '../utils';
 import {SortTypes} from '../utils/const.js';
 
 const ITEM_ACTIVE_CLASS = 'sort__button--active';
@@ -24,8 +25,24 @@ const createSortItem = ({text, isActive}) => {
   return `<li><a href="#" class="sort__button ${activeClass}">${text}</a></li>`;
 };
 
-export const createSortMenu = () => `
-  <ul class="sort">
-    ${sortItems.map(createSortItem).join('')}
-  </ul>
-`;
+export default class SortMenu {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<ul class="sort">${sortItems.map(createSortItem).join('')}</ul>`;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

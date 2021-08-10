@@ -1,17 +1,17 @@
 import {createUserProfile} from './view/user-profile.js';
 import {createMainNavigation} from './view/main-navigation.js';
-import {createSortMenu} from './view/sort-menu.js';
-import {createFilmsBoard} from './view/films-board.js';
+import SortMenuView from './view/sort-menu.js';
+import FilmsBoardView from './view/films-board.js';
 import {createFooterStatistics} from './view/footer-statistics.js';
 import {createPopup} from './view/popup.js';
 import {createFilmList} from './view/film-list.js';
 import {createFilmCard} from './view/film-card.js';
-import {createShowMoreButton} from './view/show-more.js';
+import ShowMoreButtonView from './view/show-more.js';
 import {createComments} from './view/comments.js';
-import {createNewComment} from './view/new-comment.js';
+import NewCommentView from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
-import {getRandomInteger, render, sortFilmByComments, sortFilmByRating} from './utils';
+import {getRandomInteger, render, renderElement, sortFilmByComments, sortFilmByRating} from './utils';
 import {NavigationTypes, FilmListTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
@@ -47,8 +47,8 @@ const renderCards = (container, films) => {
 
 render(headerElement, createUserProfile(watchedFilmsCount));
 render(mainElement, createMainNavigation(navigationStatistics));
-render(mainElement, createSortMenu());
-render(mainElement, createFilmsBoard(filmsData));
+renderElement(mainElement, new SortMenuView().getElement());
+renderElement(mainElement, new FilmsBoardView().getElement());
 
 const filmBoard = document.querySelector('.films');
 render(filmBoard, createFilmList(FilmListTypes.ALL_MOVIES));
@@ -71,11 +71,11 @@ const filmDetailBottomContainer = document.querySelector('.film-details .film-de
 render(filmDetailBottomContainer, createComments(selectedMovieComments));
 
 const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
-render(commentsContainer, createNewComment());
+renderElement(commentsContainer, new NewCommentView().getElement());
 
 if (filmsData.length > CARDS_LOAD_STEP) {
   let renderedCardCount = CARDS_LOAD_STEP;
-  render(allMovieSection, createShowMoreButton());
+  renderElement(allMovieSection, new ShowMoreButtonView().getElement());
   const loadMoreButton = allMovieSection.querySelector('.films-list__show-more');
 
   loadMoreButton.addEventListener('click', (evt) => {
