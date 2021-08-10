@@ -11,7 +11,7 @@ import {createComments} from './view/comments.js';
 import {createNewComment} from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
-import {getRandomInteger, sortFilmByComments, sortFilmByRating} from './utils';
+import {getRandomInteger, render, sortFilmByComments, sortFilmByRating} from './utils';
 import {NavigationTypes, FilmListTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
@@ -41,9 +41,6 @@ const navigationStatistics = {
   [NavigationTypes.FAVORITES]: favoriteFilmsCount,
 };
 
-const render = (container, template, place='beforeend') => {
-  container.insertAdjacentHTML(place, template);
-};
 const renderCards = (container, films) => {
   films.forEach((film) => render(container, createFilmCard(film)));
 };
