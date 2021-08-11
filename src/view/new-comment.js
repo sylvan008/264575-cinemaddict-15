@@ -1,13 +1,15 @@
-import {createElement} from '../utils';
 import {emotions} from '../utils/const.js';
+import AbstractComponent from '../AbstractComponent.js';
 
-const createEmojiItem = (emoji) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
-  <label class="film-details__emoji-label" for="emoji-${emoji}">
-    <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+const createEmojiItem = (emoji) =>
+  `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
+    <label class="film-details__emoji-label" for="emoji-${emoji}">
+      <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
   </label>
 `;
 
-const createNewComment = () => `<div class="film-details__new-comment">
+const createNewCommentTemplate = () =>
+  `<div class="film-details__new-comment">
     <div class="film-details__add-emoji-label"></div>
 
     <label class="film-details__comment-label">
@@ -20,24 +22,8 @@ const createNewComment = () => `<div class="film-details__new-comment">
   </div>
 `;
 
-export default class NewComment {
-  constructor() {
-    this._element = null;
-  }
-
+export default class NewComment extends AbstractComponent {
   getTemplate() {
-    return createNewComment();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createNewCommentTemplate();
   }
 }
