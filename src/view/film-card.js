@@ -1,6 +1,7 @@
-import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+
 import {FilmControlTypes} from '../utils/const.js';
 import AbstractComponent from '../AbstractComponent.js';
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils/date.js';
 
 const DESCRIPTION_MAX_LENGTH = 140;
 const DESCRIPTION_PREVIEW_LENGTH = 139;

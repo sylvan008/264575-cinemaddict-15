@@ -1,5 +1,6 @@
-import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
+
 import AbstractComponent from '../AbstractComponent.js';
+import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils/date.js';
 
 const COMMENT_TODAY = 'Today';
 const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';

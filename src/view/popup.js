@@ -1,6 +1,7 @@
-import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+
 import {FilmControlTypes} from '../utils/const.js';
 import AbstractComponent from '../AbstractComponent.js';
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils/date.js';
 
 const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
 const DATE_TEMPLATE = 'D MMMM YYYY';

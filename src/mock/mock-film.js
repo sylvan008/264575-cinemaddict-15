@@ -1,6 +1,6 @@
-import {getRandomInteger, getRandomArrayElement} from '../utils';
-import {generateNames, generateDate, generateText} from './mock-helpers.js';
 import dayjs from 'dayjs';
+import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
+import {generateNames, generateDate, generateText} from './mock-helpers.js';
 
 const generatePoster = () => {
   const posters = [
