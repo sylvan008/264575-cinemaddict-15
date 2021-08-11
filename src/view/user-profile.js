@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractComponent from '../AbstractComponent.js';
 
 const EDGE_NOVICE = 10;
 const EDGE_FAN = 20;
@@ -15,10 +15,10 @@ const getUserRank = (watchedFilmsCount) => {
 
 const createUserRank = (rank) => `<p class="profile__rating">${rank}</p>`;
 
-export default class UserProfile {
+export default class UserProfile extends AbstractComponent {
   constructor(watchedFilmsCount) {
+    super();
     this._watchedFilmsCount = watchedFilmsCount;
-    this._element = null;
   }
 
   getTemplate() {
@@ -27,17 +27,5 @@ export default class UserProfile {
       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     </section>
   `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

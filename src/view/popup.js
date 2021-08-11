@@ -1,5 +1,6 @@
-import {createElement, getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
+import AbstractComponent from '../AbstractComponent.js';
 
 const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
 const DATE_TEMPLATE = 'D MMMM YYYY';
@@ -145,10 +146,10 @@ export const createPopupTemplate = ({filmInfo, userDetails}) => {
 `;
 };
 
-export default class Popup {
+export default class Popup extends AbstractComponent {
   constructor(film = null) {
+    super();
     this._film = film;
-    this._element = null;
   }
 
   getTemplate() {
@@ -160,17 +161,5 @@ export default class Popup {
 
   setFilmData(film) {
     this._film = film;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

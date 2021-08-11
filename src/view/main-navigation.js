@@ -1,5 +1,5 @@
-import {createElement} from '../utils';
 import {NavigationTypes} from '../utils/const.js';
+import AbstractComponent from '../AbstractComponent.js';
 
 const NAVIGATION_ACTIVE_CLASS = 'main-navigation__item--active';
 const navigationItems = [
@@ -37,18 +37,17 @@ const createItemCount = (count) => `<span class="main-navigation__item-count">${
 
 const createNavigationItem = ({type, link, text, isActive, isCalculated}, navigationStatistics) => {
   const activeClass = isActive ? NAVIGATION_ACTIVE_CLASS : '';
-  return `
-    <a href="${link}" class="main-navigation__item ${activeClass}">
+  return `<a href="${link}" class="main-navigation__item ${activeClass}">
       ${text}
       ${isCalculated ? createItemCount(navigationStatistics[type]) : ''}
     </a>
   `;
 };
 
-export default class MainNavigation {
+export default class MainNavigation extends AbstractComponent {
   constructor(statistics) {
+    super();
     this._statistics = statistics;
-    this._element = null;
   }
 
   getTemplate() {
@@ -58,17 +57,5 @@ export default class MainNavigation {
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
     </nav>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

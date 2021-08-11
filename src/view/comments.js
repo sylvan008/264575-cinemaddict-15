@@ -1,4 +1,5 @@
-import {createElement, getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
+import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils';
+import AbstractComponent from '../AbstractComponent.js';
 
 const COMMENT_TODAY = 'Today';
 const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';
@@ -34,10 +35,10 @@ const createCommentItem = ({author, comment, date, emotion}) => {
   `;
 };
 
-export default class Comments {
+export default class Comments extends AbstractComponent {
   constructor(comments) {
+    super();
     this._comments = comments;
-    this._element = null;
   }
 
   getTemplate() {
@@ -49,17 +50,5 @@ export default class Comments {
       </ul>
     </section>
   `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
