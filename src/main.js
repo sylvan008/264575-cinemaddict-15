@@ -11,11 +11,12 @@ import Comments from './view/comments.js';
 import NewCommentView from './view/new-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import {generateComment} from './mock/mock-comment.js';
-import {getRandomInteger, render, sortFilmByComments, sortFilmByRating} from './utils';
-import {NavigationTypes, FilmListTypes, RenderPosition} from './utils/const.js';
+import {render, sortFilmByComments, sortFilmByRating} from './utils';
+import {NavigationTypes, FilmListTypes} from './utils/const.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
+const HIDE_OVERFLOW = 'hide-overflow';
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -26,9 +27,12 @@ const commentsData = new Array(100).fill('').map(generateComment);
 const filmsData = new Array(22).fill('').map(generateFilm);
 const topFilmsData = filmsData.slice().sort(sortFilmByRating);
 const commentsFilmsData = filmsData.slice().sort(sortFilmByComments);
-const selectedMovie = filmsData[getRandomInteger(0, filmsData.length - 1)];
-const selectedMovieComments = selectedMovie.comments
-  .map((movieCommentId) => commentsData.find(({id}) => id === movieCommentId));
+
+const popupComponent = new PopupView();
+
+const getFilmComments = (film) =>
+  film.comments.map((movieCommentId) => commentsData.find(({id}) => id === movieCommentId));
+
 const countUserStatistic = (filmsList, propertyName) => (
   filmsList.reduce((acc, {userDetails}) => acc + Number(userDetails[propertyName]), 0)
 );
@@ -42,7 +46,41 @@ const navigationStatistics = {
 };
 
 const renderCards = (container, films) => {
-  films.forEach((film) => render(container, new FilmCardView(film).getElement()));
+  films.forEach((film) => {
+    const cardElement = new FilmCardView(film).getElement();
+    const handledElements = [
+      cardElement.querySelector('.film-card__title'),
+      cardElement.querySelector('.film-card__poster'),
+      cardElement.querySelector('.film-card__comments'),
+    ];
+
+    const onPopupCloseHandler = (evt) => {
+      evt.preventDefault();
+      cardElement.removeChild(popupComponent.getElement());
+      popupComponent.removeElement();
+      document.body.classList.remove(HIDE_OVERFLOW);
+    };
+
+    const onCardClickHandler = (evt) => {
+      evt.preventDefault();
+      popupComponent.setFilmData(film);
+      const popupElement = popupComponent.getElement();
+      const filmDetailBottomContainer = popupElement.querySelector('.film-details__bottom-container');
+
+      render(filmDetailBottomContainer, new Comments(getFilmComments(film)).getElement());
+
+      const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
+      render(commentsContainer, new NewCommentView().getElement());
+
+      const closeButtonElement = popupElement.querySelector('.film-details__close-btn');
+      closeButtonElement.addEventListener('click', onPopupCloseHandler, {once: true});
+      cardElement.appendChild(popupElement);
+      document.body.classList.add(HIDE_OVERFLOW);
+    };
+    handledElements.forEach((element) => element.addEventListener('click', onCardClickHandler));
+
+    render(container, cardElement);
+  });
 };
 
 render(headerElement, new UserProfileView(watchedFilmsCount).getElement());
@@ -64,13 +102,6 @@ renderCards(topMoviesList, topFilmsData.slice(0, CARDS_EXTRA_LOAD_STEP));
 renderCards(commentMoviesList, commentsFilmsData.slice(0, CARDS_EXTRA_LOAD_STEP) );
 
 render(footerStatisticsElement, new FooterStatisticsView(filmsData.length).getElement());
-render(footerElement, new PopupView(selectedMovie).getElement(), RenderPosition.AFTEREND);
-
-const filmDetailBottomContainer = document.querySelector('.film-details .film-details__bottom-container');
-render(filmDetailBottomContainer, new Comments(selectedMovieComments).getElement());
-
-const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
-render(commentsContainer, new NewCommentView().getElement());
 
 if (filmsData.length > CARDS_LOAD_STEP) {
   let renderedCardCount = CARDS_LOAD_STEP;

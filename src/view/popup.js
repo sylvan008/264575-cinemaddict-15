@@ -146,13 +146,20 @@ export const createPopupTemplate = ({filmInfo, userDetails}) => {
 };
 
 export default class Popup {
-  constructor(film) {
+  constructor(film = null) {
     this._film = film;
     this._element = null;
   }
 
   getTemplate() {
+    if (!this._film) {
+      return;
+    }
     return createPopupTemplate(this._film);
+  }
+
+  setFilmData(film) {
+    this._film = film;
   }
 
   getElement() {
