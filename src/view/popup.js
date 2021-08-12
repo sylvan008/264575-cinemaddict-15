@@ -151,6 +151,7 @@ export default class Popup extends AbstractComponent {
   constructor(film = null) {
     super();
     this._film = film;
+    this._closeHandler = this._closeHandler.bind(this);
   }
 
   getTemplate() {
@@ -162,5 +163,15 @@ export default class Popup extends AbstractComponent {
 
   setFilmData(film) {
     this._film = film;
+  }
+
+  _closeHandler(evt) {
+    evt.preventDefault();
+    this._callback.close();
+  }
+
+  setCloseHandler(callback) {
+    this._callback.close = callback;
+    this.getElement().addEventListener('click', this._closeHandler);
   }
 }
