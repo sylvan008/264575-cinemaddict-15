@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
+import {RenderPosition} from './const.js';
 
 const HOUR = 60;
 const BREAKDOWN_RANGE_DAY = 'day';
@@ -35,7 +36,25 @@ const sortFilmByComments = (filmA, filmB) => {
   return commentsCountB - commentsCountA;
 };
 
+const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTEREND:
+      container.after(element);
+  }
+};
+
+const createElement = (template) => {
+  const element = document.createElement('div');
+  element.innerHTML = template;
+  return element.firstChild;
+};
+
 export {
+  render,
+  createElement,
   getRandomInteger,
   getRandomArrayElement,
   getHumanizeDate,

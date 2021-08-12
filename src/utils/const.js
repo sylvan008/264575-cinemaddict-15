@@ -38,7 +38,13 @@ const SortTypes = {
   RATING: 'rating',
 };
 
+const RenderPosition = {
+  AFTEREND: 'afterend',
+  BEFOREEND: 'beforeend',
+};
+
 export {
+  RenderPosition,
   FilmListTypes,
   emotions,
   FilmControlTypes,
