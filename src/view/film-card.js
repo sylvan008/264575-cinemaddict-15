@@ -1,12 +1,14 @@
-
+import AbstractComponent from '../abstract-component.js';
 import {FilmControlTypes} from '../utils/const.js';
-import AbstractComponent from '../AbstractComponent.js';
 import {getHumanizeDate, getHumanizeFilmDuration} from '../utils/date.js';
 
 const DESCRIPTION_MAX_LENGTH = 140;
 const DESCRIPTION_PREVIEW_LENGTH = 139;
 const DATE_YEAR = 'YYYY';
 const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
+const CallbackTypes = {
+  OPEN_POPUP: 'openPopup',
+};
 const CardControlTypes = [
   {
     classModifier: 'film-card__controls-item--add-to-watchlist',
@@ -69,29 +71,42 @@ const createFilmCardTemplate = (filmDetail) => {
 };
 
 export default class FilmCard extends AbstractComponent {
+  /**
+   * @param {film{}} film
+   */
   constructor(film) {
     super();
     this._film = film;
-    this._openCardHandler = this._openCardHandler.bind(this);
+    this._cardOpenHandler = this._cardOpenHandler.bind(this);
   }
 
+  /**
+   * @return {string}
+   */
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  _openCardHandler(evt) {
+  /**
+   * @param {Event} evt
+   * @private
+   */
+  _cardOpenHandler(evt) {
     evt.preventDefault();
-    this._callback.openCard();
+    this._callback[CallbackTypes.OPEN_POPUP]();
   }
 
-  setOpenCardHandler(callback) {
-    this._callback.openCard = callback;
-    const handledElements = [
-      this.getElement().querySelector('.film-card__title'),
-      this.getElement().querySelector('.film-card__poster'),
-      this.getElement().querySelector('.film-card__comments'),
-    ];
+  /**
+   * @param {function} callback
+   */
+  setCardOpenHandler(callback) {
+    this._callback[CallbackTypes.OPEN_POPUP] = callback;
 
-    handledElements.forEach((element) => element.addEventListener('click', this._openCardHandler));
+    this.getElement().querySelector('.film-card__title')
+      .addEventListener('click', this._cardOpenHandler);
+    this.getElement().querySelector('.film-card__poster')
+      .addEventListener('click', this._cardOpenHandler);
+    this.getElement().querySelector('.film-card__comments')
+      .addEventListener('click', this._cardOpenHandler);
   }
 }

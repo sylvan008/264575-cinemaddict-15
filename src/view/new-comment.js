@@ -1,5 +1,5 @@
+import AbstractComponent from '../abstract-component.js';
 import {emotions} from '../utils/const.js';
-import AbstractComponent from '../AbstractComponent.js';
 
 const createEmojiItem = (emoji) =>
   `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
@@ -23,6 +23,9 @@ const createNewCommentTemplate = () =>
 `;
 
 export default class NewComment extends AbstractComponent {
+  /**
+   * @return {string}
+   */
   getTemplate() {
     return createNewCommentTemplate();
   }

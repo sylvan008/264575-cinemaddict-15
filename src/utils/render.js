@@ -1,4 +1,4 @@
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
 
 const RenderPosition = {
   AFTEREND: 'afterend',

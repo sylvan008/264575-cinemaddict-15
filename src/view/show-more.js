@@ -1,4 +1,8 @@
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
+
+const CallbackTypes = {
+  CLICK: 'click',
+};
 
 export default class ShowMoreButton extends AbstractComponent {
   constructor() {
@@ -16,14 +20,14 @@ export default class ShowMoreButton extends AbstractComponent {
    */
   _clickHandler(evt) {
     evt.preventDefault();
-    this._callback.click();
+    this._callback[CallbackTypes.CLICK]();
   }
 
   /**
    * @param {function} callback
    */
   setClickHandler(callback) {
-    this._callback.click = callback;
+    this._callback[CallbackTypes.CLICK] = callback;
     this.getElement().addEventListener('click', this._clickHandler);
   }
 }

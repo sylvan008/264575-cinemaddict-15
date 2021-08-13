@@ -1,5 +1,5 @@
 import {SortTypes} from '../utils/const.js';
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
 
 const ITEM_ACTIVE_CLASS = 'sort__button--active';
 const sortItems = [
@@ -20,13 +20,17 @@ const sortItems = [
   },
 ];
 
-const createSortItem = ({text, isActive}) => {
-  const activeClass = isActive ? ITEM_ACTIVE_CLASS : '';
-  return `<li><a href="#" class="sort__button ${activeClass}">${text}</a></li>`;
-};
+const createSortMenuTemplate = () =>
+  `<ul class="sort">
+    ${sortItems.map(({text, isActive}) =>
+    `<li><a href="#" className="sort__button ${isActive ? ITEM_ACTIVE_CLASS : ''}">${text}</a></li>`,
+  ).join('')}</ul>`;
 
 export default class SortMenu extends AbstractComponent {
+  /**
+   * @return {string}
+   */
   getTemplate() {
-    return `<ul class="sort">${sortItems.map(createSortItem).join('')}</ul>`;
+    return createSortMenuTemplate();
   }
 }

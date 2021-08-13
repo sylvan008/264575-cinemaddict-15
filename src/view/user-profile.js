@@ -1,4 +1,4 @@
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
 
 const EDGE_NOVICE = 10;
 const EDGE_FAN = 20;
@@ -15,17 +15,30 @@ const getUserRank = (watchedFilmsCount) => {
 
 const createUserRank = (rank) => `<p class="profile__rating">${rank}</p>`;
 
-export default class UserProfile extends AbstractComponent {
-  constructor(watchedFilmsCount) {
-    super();
-    this._watchedFilmsCount = watchedFilmsCount;
-  }
-
-  getTemplate() {
-    return `<section class="header__profile profile">
-      ${this._watchedFilmsCount ? createUserRank(getUserRank(this._watchedFilmsCount)) : ''}
+const createUserProfileTemplate = (count) =>
+  `<section class="header__profile profile">
+      ${count ? createUserRank(getUserRank(count)) : ''}
       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     </section>
   `;
+
+export default class UserProfile extends AbstractComponent {
+  /**
+   * @param {number} watchedFilmsCount
+   */
+  constructor(watchedFilmsCount = 0) {
+    super();
+    /**
+     * @type {number}
+     * @private
+     */
+    this._watchedFilmsCount = watchedFilmsCount;
+  }
+
+  /**
+   * @return {string}
+   */
+  getTemplate() {
+    return createUserProfileTemplate(this._watchedFilmsCount);
   }
 }

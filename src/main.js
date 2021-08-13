@@ -29,8 +29,6 @@ const filmsData = new Array(22).fill('').map(generateFilm);
 const topFilmsData = filmsData.slice().sort(sortFilmByRating);
 const commentsFilmsData = filmsData.slice().sort(sortFilmByComments);
 
-const popupComponent = new PopupView();
-
 const getFilmComments = (film) =>
   film.comments.map((movieCommentId) => commentsData.find(({id}) => id === movieCommentId));
 
@@ -50,13 +48,8 @@ const renderCards = (container, films) => {
   films.forEach((film) => {
     const cardComponent = new FilmCardView(film);
 
-    const onPopupCloseHandler = () => {
-      remove(popupComponent);
-      document.body.classList.remove(HIDE_OVERFLOW);
-    };
-
     const onCardClickHandler = () => {
-      popupComponent.setFilmData(film);
+      const popupComponent = new PopupView(film);
       const popupElement = popupComponent.getElement();
 
       const filmDetailBottomContainer = popupElement.querySelector('.film-details__bottom-container');
@@ -65,12 +58,15 @@ const renderCards = (container, films) => {
       const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
       render(commentsContainer, new NewCommentView());
 
-      popupComponent.setCloseHandler(onPopupCloseHandler);
+      popupComponent.setCloseHandler(() => {
+        remove(popupComponent);
+        document.body.classList.remove(HIDE_OVERFLOW);
+      });
       render(cardComponent, popupComponent);
       document.body.classList.add(HIDE_OVERFLOW);
     };
 
-    cardComponent.setOpenCardHandler(onCardClickHandler);
+    cardComponent.setCardOpenHandler(onCardClickHandler);
     render(container, cardComponent);
   });
 };

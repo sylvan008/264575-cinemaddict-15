@@ -5,15 +5,29 @@ export default class AbstractComponent {
     if (new.target === AbstractComponent) {
       throw new Error('Can\'t instantiate AbstractComponent, only concrete one.');
     }
+    /**
+     * @type {?HTMLElement}
+     * @private
+     */
     this._element = null;
+
+    /**
+     * @type {{name: function}}
+     * @private
+     */
     this._callback = {};
   }
 
+  /**
+   * Метод должен будет возвращать строковое представление HTML разметки будущего компонента
+   * @abstract
+   */
   getTemplate() {
     throw new Error('Abstract method not implemented: getTemplate');
   }
 
   /**
+   * Возвращает HTML элемент созданный из разметки.
    * @return {HTMLElement}
    */
   getElement() {
@@ -24,6 +38,10 @@ export default class AbstractComponent {
     return this._element;
   }
 
+  /**
+   * Удаляет ссылку на элемент в компоненте
+   * @return {void}
+   */
   removeElement() {
     this._element = null;
   }

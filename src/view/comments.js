@@ -1,5 +1,4 @@
-
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
 import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils/date.js';
 
 const COMMENT_TODAY = 'Today';
@@ -36,20 +35,37 @@ const createCommentItem = ({author, comment, date, emotion}) => {
   `;
 };
 
-export default class Comments extends AbstractComponent {
-  constructor(comments) {
-    super();
-    this._comments = comments;
-  }
-
-  getTemplate() {
-    return `<section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
+/**
+ * @param {comment[]} comments
+ * @return {string} HTML template
+ */
+const createCommentsTemplate = (comments) =>
+  `<section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
       <ul class="film-details__comments-list">
-        ${this._comments.map(createCommentItem).join('')}
+        ${comments.map(createCommentItem).join('')}
       </ul>
     </section>
   `;
+
+export default class Comments extends AbstractComponent {
+  /**
+   * @param {comment[]} comments
+   */
+  constructor(comments) {
+    super();
+    /**
+     * @type {comment[]}
+     * @private
+     */
+    this._comments = comments;
+  }
+
+  /**
+   * @return {string}
+   */
+  getTemplate() {
+    return createCommentsTemplate(this._comments);
   }
 }

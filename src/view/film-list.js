@@ -1,4 +1,4 @@
-import AbstractComponent from '../AbstractComponent.js';
+import AbstractComponent from '../abstract-component.js';
 
 const createFilmListTemplate = (listProps) => {
   const {title, isHidden, isExtra} = listProps;
@@ -13,11 +13,21 @@ const createFilmListTemplate = (listProps) => {
 };
 
 export default class FilmList extends AbstractComponent {
+  /**
+   * @param {{}} listProps
+   */
   constructor(listProps) {
     super();
+    /**
+     * @type {{}}
+     * @private
+     */
     this._listProps = listProps;
   }
 
+  /**
+   * @return {string}
+   */
   getTemplate() {
     return createFilmListTemplate(this._listProps);
   }
