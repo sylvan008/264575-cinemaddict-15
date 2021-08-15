@@ -13,11 +13,9 @@ const getUserRank = (watchedFilmsCount) => {
   return 'Movie Buff';
 };
 
-const createUserRank = (rank) => `<p class="profile__rating">${rank}</p>`;
-
 const createUserProfileTemplate = (count) =>
   `<section class="header__profile profile">
-      ${count ? createUserRank(getUserRank(count)) : ''}
+      ${count ? `<p class="profile__rating">${getUserRank(count)}</p>` : ''}
       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     </section>
   `;
