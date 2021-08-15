@@ -23,7 +23,7 @@ const sortItems = [
 const createSortMenuTemplate = () =>
   `<ul class="sort">
     ${sortItems.map(({text, isActive}) =>
-    `<li><a href="#" className="sort__button ${isActive ? ITEM_ACTIVE_CLASS : ''}">${text}</a></li>`,
+    `<li><a href="#" class="sort__button ${isActive ? ITEM_ACTIVE_CLASS : ''}">${text}</a></li>`,
   ).join('')}</ul>`;
 
 export default class SortMenu extends AbstractComponent {
