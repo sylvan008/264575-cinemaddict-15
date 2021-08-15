@@ -1,6 +1,7 @@
 import AbstractComponent from '../abstract-component.js';
 
 const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
   AFTEREND: 'afterend',
   BEFOREEND: 'beforeend',
 };
@@ -14,6 +15,9 @@ const render = (container, child, place = RenderPosition.BEFOREEND) => {
   }
 
   switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(child);
+      break;
     case RenderPosition.BEFOREEND:
       container.append(child);
       break;

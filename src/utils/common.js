@@ -8,21 +8,7 @@ function getRandomArrayElement(array) {
   return array[getRandomInteger(0, array.length - 1)];
 }
 
-const sortFilmByRating = (filmA, filmB) => {
-  const totalRatingA = filmA.filmInfo.totalRating;
-  const totalRatingB = filmB.filmInfo.totalRating;
-  return totalRatingB - totalRatingA;
-};
-
-const sortFilmByComments = (filmA, filmB) => {
-  const commentsCountA = filmA.comments.length;
-  const commentsCountB = filmB.comments.length;
-  return commentsCountB - commentsCountA;
-};
-
 export {
   getRandomInteger,
-  getRandomArrayElement,
-  sortFilmByRating,
-  sortFilmByComments
+  getRandomArrayElement
 };
