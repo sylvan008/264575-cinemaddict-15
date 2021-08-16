@@ -1,8 +1,13 @@
-import {createElement, getHumanizeDate, getHumanizeFilmDuration} from '../utils';
 import {FilmControlTypes} from '../utils/const.js';
+import AbstractComponent from '../abstract-component.js';
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils/date.js';
 
 const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
 const DATE_TEMPLATE = 'D MMMM YYYY';
+const CallbackTypes = {
+  CLOSE: 'close',
+};
+
 const filmDetailControlTypes = [
   {
     classModifier: 'film-details__control-button--watchlist',
@@ -145,32 +150,36 @@ export const createPopupTemplate = ({filmInfo, userDetails}) => {
 `;
 };
 
-export default class Popup {
-  constructor(film = null) {
+export default class Popup extends AbstractComponent {
+  constructor(film) {
+    super();
+
+    /**
+     * @type {film{}}
+     * @private
+     */
     this._film = film;
-    this._element = null;
+    this._closeHandler = this._closeHandler.bind(this);
   }
 
+  /**
+   * @return {string}
+   */
   getTemplate() {
-    if (!this._film) {
-      return;
-    }
     return createPopupTemplate(this._film);
   }
 
-  setFilmData(film) {
-    this._film = film;
+  /**
+   * @param {Event} evt
+   * @private
+   */
+  _closeHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.CLOSE]();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setCloseHandler(callback) {
+    this._callback[CallbackTypes.CLOSE] = callback;
+    this.getElement().addEventListener('click', this._closeHandler);
   }
 }

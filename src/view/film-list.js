@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractComponent from '../abstract-component.js';
 
 const createFilmListTemplate = (listProps) => {
   const {title, isHidden, isExtra} = listProps;
@@ -12,25 +12,23 @@ const createFilmListTemplate = (listProps) => {
   `;
 };
 
-export default class FilmList {
+export default class FilmList extends AbstractComponent {
+  /**
+   * @param {{}} listProps
+   */
   constructor(listProps) {
+    super();
+    /**
+     * @type {{}}
+     * @private
+     */
     this._listProps = listProps;
-    this._element = null;
   }
 
+  /**
+   * @return {string}
+   */
   getTemplate() {
     return createFilmListTemplate(this._listProps);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

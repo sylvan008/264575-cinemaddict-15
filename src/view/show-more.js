@@ -1,23 +1,33 @@
-import {createElement} from '../utils';
+import AbstractComponent from '../abstract-component.js';
 
-export default class ShowMoreButton {
+const CallbackTypes = {
+  CLICK: 'click',
+};
+
+export default class ShowMoreButton extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return '<button class="films-list__show-more">Show more</button>';
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  /**
+   * @param {Event} evt
+   * @private
+   */
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.CLICK]();
   }
 
-  removeElement() {
-    this._element = null;
+  /**
+   * @param {function} callback
+   */
+  setClickHandler(callback) {
+    this._callback[CallbackTypes.CLICK] = callback;
+    this.getElement().addEventListener('click', this._clickHandler);
   }
 }

@@ -1,7 +1,7 @@
-import {emotions} from '../utils/const.js';
-import {getRandomArrayElement} from '../utils';
-import {generateNames, generateDate, generateText} from './mock-helpers.js';
 import dayjs from 'dayjs';
+import {emotions} from '../utils/const.js';
+import {getRandomArrayElement} from '../utils/common.js';
+import {generateNames, generateDate, generateText} from './mock-helpers.js';
 
 const generateEmotion = () => (getRandomArrayElement(emotions));
 

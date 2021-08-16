@@ -1,5 +1,5 @@
-import {getRandomArrayElement, getRandomInteger} from '../utils';
 import dayjs from 'dayjs';
+import {getRandomArrayElement, getRandomInteger} from '../utils/common.js';
 
 const generateDate = (rangeYears=[1970, 2021], rangeMonths=[1, 12], rangeDays=[1, 31]) => {
   const year = getRandomInteger(...rangeYears);

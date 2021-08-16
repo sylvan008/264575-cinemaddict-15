@@ -1,10 +1,14 @@
-import {createElement, getHumanizeDate, getHumanizeFilmDuration} from '../utils';
+import AbstractComponent from '../abstract-component.js';
 import {FilmControlTypes} from '../utils/const.js';
+import {getHumanizeDate, getHumanizeFilmDuration} from '../utils/date.js';
 
 const DESCRIPTION_MAX_LENGTH = 140;
 const DESCRIPTION_PREVIEW_LENGTH = 139;
 const DATE_YEAR = 'YYYY';
 const CONTROL_ACTIVE_CLASS = 'film-card__controls-item--active';
+const CallbackTypes = {
+  OPEN_POPUP: 'openPopup',
+};
 const CardControlTypes = [
   {
     classModifier: 'film-card__controls-item--add-to-watchlist',
@@ -66,25 +70,43 @@ const createFilmCardTemplate = (filmDetail) => {
   `;
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractComponent {
+  /**
+   * @param {film{}} film
+   */
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
+    this._cardOpenHandler = this._cardOpenHandler.bind(this);
   }
 
+  /**
+   * @return {string}
+   */
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  /**
+   * @param {Event} evt
+   * @private
+   */
+  _cardOpenHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.OPEN_POPUP]();
   }
 
-  removeElement() {
-    this._element = null;
+  /**
+   * @param {function} callback
+   */
+  setCardOpenHandler(callback) {
+    this._callback[CallbackTypes.OPEN_POPUP] = callback;
+
+    this.getElement().querySelector('.film-card__title')
+      .addEventListener('click', this._cardOpenHandler);
+    this.getElement().querySelector('.film-card__poster')
+      .addEventListener('click', this._cardOpenHandler);
+    this.getElement().querySelector('.film-card__comments')
+      .addEventListener('click', this._cardOpenHandler);
   }
 }
