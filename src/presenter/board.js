@@ -30,8 +30,11 @@ export class Board {
     this._userStatistics = defaultStatistics;
     this._boardContainer = boardContainer;
 
+    this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
+
     this._boardComponent = new FilmsBoard();
     this._sortMenuComponent = new SortMenu();
+    this._showMoreButtonComponent = new ShowMoreButtonView();
   }
 
   init(filmsList, commentsList) {
@@ -60,6 +63,15 @@ export class Board {
 
   _getFilmComments(film) {
     return film.comments.map((movieCommentId) => this._comments.find(({id}) => id === movieCommentId));
+  }
+
+  _handleShowMoreButtonCLick() {
+    const nextCards = Math.min(this._films.length, this._renderedCardCount + CARDS_LOAD_STEP);
+    this._renderCards(this._allFilmListComponent, this._films, this._renderedCardCount, nextCards);
+    this._renderedCardCount = nextCards;
+    if (this._renderedCardCount >= this._films.length) {
+      remove(this._showMoreButtonComponent);
+    }
   }
 
   _renderAllFilmList(from, to) {
@@ -157,19 +169,8 @@ export class Board {
   }
 
   _renderShowMoreButton() {
-    if (this._films.length > CARDS_LOAD_STEP) {
-      this._showMoreButtonComponent = new ShowMoreButtonView();
-      render(this._allFilmListComponent, this._showMoreButtonComponent);
-
-      this._showMoreButtonComponent.setClickHandler(() => {
-        const nextCards = Math.min(this._films.length, this._renderedCardCount + CARDS_LOAD_STEP);
-        this._renderCards(this._allFilmListComponent, this._films, this._renderedCardCount, nextCards);
-        this._renderedCardCount = nextCards;
-        if (this._renderedCardCount >= this._films.length) {
-          remove(this._showMoreButtonComponent);
-        }
-      });
-    }
+    render(this._allFilmListComponent, this._showMoreButtonComponent);
+    this._showMoreButtonComponent.setClickHandler(this._handleShowMoreButtonCLick);
   }
 
   _sortFilms(sortType) {
