@@ -40,9 +40,24 @@ const remove = (component) => {
   component.removeElement();
 };
 
+const replace = (newChild, oldChild) => {
+  if (newChild instanceof AbstractComponent) {
+    newChild = newChild.getElement();
+  }
+  if (oldChild instanceof AbstractComponent) {
+    oldChild = oldChild.getElement();
+  }
+  const parent = oldChild.parentElement;
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error('Can\'t  replace unexisting elements');
+  }
+  parent.replaceChild(newChild, oldChild);
+};
+
 export {
   render,
   remove,
+  replace,
   createElement,
   RenderPosition
 };

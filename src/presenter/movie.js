@@ -2,7 +2,7 @@ import FilmCardView from '../view/film-card.js';
 import PopupView from '../view/popup.js';
 import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
-import {remove, render} from '../utils/render.js';
+import {remove, render, replace} from '../utils/render.js';
 import {isEscapeKey} from '../utils/common.js';
 
 const HIDE_OVERFLOW = 'hide-overflow';
@@ -20,13 +20,28 @@ export default class Movie {
   }
 
   init(film, comments) {
+    const prevFilmCardComponent = this._filmCardComponent;
+
     this._film = film;
     this._comments = comments;
 
     this._filmCardComponent = new FilmCardView(film);
     this._filmCardComponent.setCardOpenHandler(this._handleFilmCardClick);
 
-    render(this._cardListContainer, this._filmCardComponent);
+    if (prevFilmCardComponent === null) {
+      render(this._cardListContainer, this._filmCardComponent);
+      return;
+    }
+
+    if (this._cardListContainer.getElement().contains(prevFilmCardComponent.getElement())) {
+      replace(this._filmCardComponent, prevFilmCardComponent);
+    }
+
+    remove(prevFilmCardComponent);
+  }
+
+  destroy() {
+    remove(this._filmCardComponent);
   }
 
   _escKeyDownHandler(evt) {
