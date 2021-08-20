@@ -1,11 +1,8 @@
-import Comments from '../view/comments.js';
+import Movie from './movie.js';
 import FilmsBoard from '../view/films-board.js';
-import FilmCardView from '../view/film-card.js';
 import FilmListView from '../view/film-list.js';
 import MainNavigation from '../view/main-navigation.js';
-import NewCommentView from '../view/new-comment.js';
 import NoFilmView from '../view/no-film.js';
-import PopupView from '../view/popup.js';
 import ShowMoreButtonView from '../view/show-more.js';
 import SortMenu from '../view/sort-menu.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
@@ -14,7 +11,6 @@ import {sortFilmByComments, sortFilmByRating, SortTypes} from '../utils/sort.js'
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
-const HIDE_OVERFLOW = 'hide-overflow';
 
 const defaultStatistics = {
   [NavigationTypes.HISTORY]: 0,
@@ -59,10 +55,6 @@ export class Board {
     this._userStatistics[NavigationTypes.WATCHLIST] = this._countStatistic(this._films, 'watchlist');
     this._userStatistics[NavigationTypes.FAVORITES] = this._countStatistic(this._films, 'favorite');
     this._userStatistics[NavigationTypes.HISTORY] = this._countStatistic(this._films, 'alreadyWatched');
-  }
-
-  _getFilmComments(film) {
-    return film.comments.map((movieCommentId) => this._comments.find(({id}) => id === movieCommentId));
   }
 
   _handleShowMoreButtonCLick() {
@@ -116,28 +108,8 @@ export class Board {
   }
 
   _renderCard(container, film) {
-    const cardComponent = new FilmCardView(film);
-
-    const onCardClickHandler = () => {
-      const popupComponent = new PopupView(film);
-      const popupElement = popupComponent.getElement();
-
-      const filmDetailBottomContainer = popupElement.querySelector('.film-details__bottom-container');
-      render(filmDetailBottomContainer, new Comments(this._getFilmComments(film)));
-
-      const commentsContainer = filmDetailBottomContainer.querySelector('.film-details__comments-wrap');
-      render(commentsContainer, new NewCommentView());
-
-      popupComponent.setCloseHandler(() => {
-        remove(popupComponent);
-        document.body.classList.remove(HIDE_OVERFLOW);
-      });
-      render(cardComponent, popupComponent);
-      document.body.classList.add(HIDE_OVERFLOW);
-    };
-
-    cardComponent.setCardOpenHandler(onCardClickHandler);
-    render(container, cardComponent);
+    const MoviePresenter = new Movie(container);
+    MoviePresenter.init(film, this._comments);
   }
 
   _renderCards(listComponent, filmsList, from, to) {
