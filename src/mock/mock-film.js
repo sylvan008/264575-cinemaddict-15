@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
 import {generateNames, generateDate, generateText} from './mock-helpers.js';
 
@@ -96,6 +97,7 @@ const generateFilm = () => {
   const [title, originalTitle] = generateTitle();
   return {
     filmInfo: {
+      id: nanoid(),
       title,
       originalTitle,
       poster: generatePoster(),

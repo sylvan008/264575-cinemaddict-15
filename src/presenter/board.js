@@ -23,6 +23,7 @@ export class Board {
     this._renderedCardCount = CARDS_LOAD_STEP;
     this._films = [];
     this.commets = [];
+    this._filmPresenter = new Map();
     this._userStatistics = defaultStatistics;
     this._boardContainer = boardContainer;
 
@@ -45,6 +46,13 @@ export class Board {
     this._allFilmListComponent = new FilmListView(FilmListTypes.ALL_MOVIES);
 
     this._renderBoard();
+  }
+
+  _clearFilmList() {
+    this._filmPresenter.forEach((presenter) => presenter.destroy());
+    this._filmPresenter.clear();
+    this._renderedCardCount = CARDS_LOAD_STEP;
+    remove(this._showMoreButtonComponent);
   }
 
   _countStatistic(filmsList, propertyName) {
@@ -110,6 +118,7 @@ export class Board {
   _renderCard(container, film) {
     const MoviePresenter = new Movie(container);
     MoviePresenter.init(film, this._comments);
+    this._filmPresenter.set(film.id, MoviePresenter);
   }
 
   _renderCards(listComponent, filmsList, from, to) {
