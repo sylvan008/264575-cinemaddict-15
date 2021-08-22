@@ -8,6 +8,7 @@ import SortMenu from '../view/sort-menu.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {FilmListTypes, NavigationTypes} from '../utils/const.js';
 import {sortFilmByComments, sortFilmByRating, SortTypes} from '../utils/sort.js';
+import {updateItem} from '../utils/common.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
@@ -28,6 +29,7 @@ export class Board {
     this._boardContainer = boardContainer;
 
     this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
+    this._handleFilmChange = this._handleFilmChange.bind(this);
 
     this._boardComponent = new FilmsBoard();
     this._sortMenuComponent = new SortMenu();
@@ -72,6 +74,11 @@ export class Board {
     if (this._renderedCardCount >= this._films.length) {
       remove(this._showMoreButtonComponent);
     }
+  }
+
+  _handleFilmChange(updatedFilm) {
+    this._films = updateItem(this._films, updatedFilm);
+    this._filmPresenter.get(updatedFilm.id).init(updatedFilm);
   }
 
   _renderAllFilmList(from, to) {
