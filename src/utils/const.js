@@ -21,7 +21,7 @@ const FilmListTypes = {
 
 const FilmControlTypes = {
   WATCHLIST: 'watchlist',
-  WATCHED: 'watched',
+  WATCHED: 'alreadyWatched',
   FAVORITE: 'favorite',
 };
 

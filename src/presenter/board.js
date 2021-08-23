@@ -78,7 +78,7 @@ export class Board {
 
   _handleFilmChange(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
-    this._filmPresenter.get(updatedFilm.id).init(updatedFilm);
+    this._filmPresenter.get(updatedFilm.filmInfo.id).init(updatedFilm, this._comments);
   }
 
   _renderAllFilmList(from, to) {
@@ -123,9 +123,9 @@ export class Board {
   }
 
   _renderCard(container, film) {
-    const MoviePresenter = new Movie(container);
+    const MoviePresenter = new Movie(container, this._handleFilmChange);
     MoviePresenter.init(film, this._comments);
-    this._filmPresenter.set(film.id, MoviePresenter);
+    this._filmPresenter.set(film.filmInfo.id, MoviePresenter);
   }
 
   _renderCards(listComponent, filmsList, from, to) {
