@@ -30,6 +30,7 @@ export class Board {
 
     this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
 
     this._boardComponent = new FilmsBoard();
     this._sortMenuComponent = new SortMenu();
@@ -81,6 +82,10 @@ export class Board {
     this._filmPresenter.get(updatedFilm.filmInfo.id).init(updatedFilm, this._comments);
   }
 
+  _handleModeChange() {
+    this._filmPresenter.forEach((presenter) => presenter.resetView());
+  }
+
   _renderAllFilmList(from, to) {
     render(this._filmsBoardComponent, this._allFilmListComponent);
     this._renderCards(this._allFilmListComponent, this._films, from, to);
@@ -123,7 +128,7 @@ export class Board {
   }
 
   _renderCard(container, film) {
-    const MoviePresenter = new Movie(container, this._handleFilmChange);
+    const MoviePresenter = new Movie(container, this._handleFilmChange, this._handleModeChange);
     MoviePresenter.init(film, this._comments);
     this._filmPresenter.set(film.filmInfo.id, MoviePresenter);
   }

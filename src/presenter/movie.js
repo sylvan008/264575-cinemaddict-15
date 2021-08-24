@@ -6,17 +6,24 @@ import {remove, render, replace} from '../utils/render.js';
 import {isEscapeKey} from '../utils/common.js';
 
 const HIDE_OVERFLOW = 'hide-overflow';
+const Mode = {
+  OPEN: 'open',
+  DEFAULT: 'default',
+};
 
 /**
  * Create new film card
  * @class
  * @param {HTMLElement} cardListContainer
  * @param {function} changeData
+ * @param {function} changeMode
  */
 export default class Movie {
-  constructor(cardListContainer, changeData) {
+  constructor(cardListContainer, changeData, changeMode) {
+    this._mode = Mode.DEFAULT;
     this._cardListContainer = cardListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._filmCardComponent = null;
     this._popupComponent = null;
@@ -57,6 +64,12 @@ export default class Movie {
     remove(this._filmCardComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._handlePopupCloseButtonClick();
+    }
+  }
+
   _escKeyDownHandler(evt) {
     if (!isEscapeKey(evt)) {
       return;
@@ -69,6 +82,7 @@ export default class Movie {
   }
 
   _handleFilmCardClick() {
+    this._changeMode();
     this._popupComponent = new PopupView(this._film);
 
     this._renderPopupComments(this._getFilmComments());
@@ -78,6 +92,7 @@ export default class Movie {
 
     document.addEventListener('keydown', this._escKeyDownHandler);
     document.body.classList.add(HIDE_OVERFLOW);
+    this._mode = Mode.OPEN;
   }
 
   _handlePopupCloseButtonClick() {
@@ -85,6 +100,7 @@ export default class Movie {
     this._popupComponent = null;
     document.removeEventListener('keydown', this._escKeyDownHandler);
     document.body.classList.remove(HIDE_OVERFLOW);
+    this._mode = Mode.DEFAULT;
   }
 
   _handleAddToHistoryButtonClick() {
