@@ -67,7 +67,7 @@ const tableDetailsModel = [
   {
     title: 'Genres',
     key: 'genre',
-    handler: (genres) => genres.map(createGenreItem),
+    handler: (genres) => genres.map(createGenreItem).join(''),
   },
 ];
 
@@ -180,6 +180,7 @@ export default class Popup extends AbstractComponent {
 
   setCloseHandler(callback) {
     this._callback[CallbackTypes.CLOSE] = callback;
-    this.getElement().addEventListener('click', this._closeHandler);
+    this.getElement().querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeHandler);
   }
 }
