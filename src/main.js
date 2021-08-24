@@ -4,7 +4,6 @@ import {generateComment} from './mock/mock-comment.js';
 import {render} from './utils/render.js';
 import {Board} from './presenter/board.js';
 
-const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
 const footerStatisticsElement = document.querySelector('.footer__statistics');
 

@@ -57,6 +57,10 @@ export default class Movie {
       replace(this._filmCardComponent, prevFilmCardComponent);
     }
 
+    if (this._mode === Mode.OPEN) {
+      this._handleFilmCardClick();
+    }
+
     remove(prevFilmCardComponent);
   }
 
@@ -87,7 +91,12 @@ export default class Movie {
 
     this._renderPopupComments(this._getFilmComments());
     this._renderNewComment();
+
     this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
+    this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
+    this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
+    this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
+
     render(this._filmCardComponent, this._popupComponent);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
