@@ -12,6 +12,16 @@ import {updateItem} from '../utils/common.js';
 
 const CARDS_LOAD_STEP = 5;
 const CARDS_EXTRA_LOAD_STEP = 2;
+const PresenterListTypes = {
+  COMMON: 'filmPresenter',
+  RATING: 'filmRatingPresenter',
+  COMMENTED: 'filmCommentedPresenter',
+};
+const StatisticTypes = {
+  ALREADY_WATCHED: 'alreadyWatched',
+  WATCHLIST: 'watchlist',
+  FAVORITE: 'favorite',
+};
 
 const defaultStatistics = {
   [NavigationTypes.HISTORY]: 0,
@@ -23,8 +33,12 @@ export class Board {
   constructor(boardContainer) {
     this._renderedCardCount = CARDS_LOAD_STEP;
     this._films = [];
-    this.commets = [];
-    this._filmPresenter = new Map();
+    this._comments = [];
+    this._presenters = {
+      [PresenterListTypes.COMMON]: new Map(),
+      [PresenterListTypes.RATING]: new Map(),
+      [PresenterListTypes.COMMENTED]: new Map(),
+    };
     this._userStatistics = defaultStatistics;
     this._boardContainer = boardContainer;
 
@@ -39,9 +53,8 @@ export class Board {
 
   init(filmsList, commentsList) {
     this._films = filmsList.slice();
+    this._sourceFilms = filmsList.slice();
     this._comments = commentsList.slice();
-    this._topFilms = this._films.slice().sort(sortFilmByRating);
-    this._commentsFilms = this._films.slice().sort(sortFilmByComments);
     this._countUserStatistics();
 
     this._mainNavigationComponent = new MainNavigation(this._userStatistics);
@@ -52,8 +65,10 @@ export class Board {
   }
 
   _clearFilmList() {
-    this._filmPresenter.forEach((presenter) => presenter.destroy());
-    this._filmPresenter.clear();
+    const destroyFilmPresenter = (presenter) => presenter.destroy();
+    const presenterCollections = Object.values(this._presenters);
+    presenterCollections.forEach((collection) => collection.forEach(destroyFilmPresenter));
+    presenterCollections.forEach((collection) => collection.clear());
     this._renderedCardCount = CARDS_LOAD_STEP;
     remove(this._showMoreButtonComponent);
   }
@@ -63,14 +78,20 @@ export class Board {
   }
 
   _countUserStatistics() {
-    this._userStatistics[NavigationTypes.WATCHLIST] = this._countStatistic(this._films, 'watchlist');
-    this._userStatistics[NavigationTypes.FAVORITES] = this._countStatistic(this._films, 'favorite');
-    this._userStatistics[NavigationTypes.HISTORY] = this._countStatistic(this._films, 'alreadyWatched');
+    this._userStatistics[NavigationTypes.WATCHLIST] = this._countStatistic(this._films, StatisticTypes.WATCHLIST);
+    this._userStatistics[NavigationTypes.FAVORITES] = this._countStatistic(this._films, StatisticTypes.FAVORITE);
+    this._userStatistics[NavigationTypes.HISTORY] = this._countStatistic(this._films, StatisticTypes.ALREADY_WATCHED);
   }
 
   _handleShowMoreButtonCLick() {
     const nextCards = Math.min(this._films.length, this._renderedCardCount + CARDS_LOAD_STEP);
-    this._renderCards(this._allFilmListComponent, this._films, this._renderedCardCount, nextCards);
+    this._renderCards(
+      this._presenters[PresenterListTypes.COMMON],
+      this._allFilmListComponent,
+      this._films,
+      this._renderedCardCount,
+      nextCards,
+    );
     this._renderedCardCount = nextCards;
     if (this._renderedCardCount >= this._films.length) {
       remove(this._showMoreButtonComponent);
@@ -79,17 +100,29 @@ export class Board {
 
   _handleFilmChange(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
-    this._filmPresenter.get(updatedFilm.filmInfo.id).init(updatedFilm, this._comments);
+    Object.values(this._presenters).forEach((collection) => {
+      const film = collection.get(updatedFilm.filmInfo.id);
+      if (film) {
+        film.init(updatedFilm, this._comments);
+      }
+    });
   }
 
   _handleModeChange() {
-    this._filmPresenter.forEach((presenter) => presenter.resetView());
+    const resetFilmView = (presenter) => presenter.resetView();
+    Object.values(this._presenters).forEach((collection) => collection.forEach(resetFilmView));
   }
 
   _renderAllFilmList(from, to) {
     render(this._filmsBoardComponent, this._allFilmListComponent);
-    this._renderCards(this._allFilmListComponent, this._films, from, to);
-    if(this._films.length > CARDS_LOAD_STEP) {
+    this._renderCards(
+      this._presenters[PresenterListTypes.COMMON],
+      this._allFilmListComponent,
+      this._films,
+      from,
+      to,
+    );
+    if (this._films.length > CARDS_LOAD_STEP) {
       this._renderShowMoreButton();
     }
   }
@@ -101,7 +134,13 @@ export class Board {
     }
     this._commentedFilmListComponent = new FilmListView(FilmListTypes.COMMENTED_MOVIES);
     render(this._filmsBoardComponent, this._commentedFilmListComponent);
-    this._renderCards(this._commentedFilmListComponent, sortedFilms, from, to);
+    this._renderCards(
+      this._presenters[PresenterListTypes.COMMENTED],
+      this._commentedFilmListComponent,
+      sortedFilms,
+      from,
+      to,
+    );
   }
 
   _renderTopFilmList(from, to) {
@@ -111,7 +150,13 @@ export class Board {
     }
     this._topFilmListComponent = new FilmListView(FilmListTypes.TOP_MOVIES);
     render(this._filmsBoardComponent, this._topFilmListComponent);
-    this._renderCards(this._topFilmListComponent, sortedFilms, from, to);
+    this._renderCards(
+      this._presenters[PresenterListTypes.RATING],
+      this._topFilmListComponent,
+      sortedFilms,
+      from,
+      to,
+    );
   }
 
   _renderBoard() {
@@ -127,17 +172,17 @@ export class Board {
     this._renderFilmsBoard();
   }
 
-  _renderCard(container, film) {
+  _renderCard(presenterCollection, container, film) {
     const MoviePresenter = new Movie(container, this._handleFilmChange, this._handleModeChange);
     MoviePresenter.init(film, this._comments);
-    this._filmPresenter.set(film.filmInfo.id, MoviePresenter);
+    presenterCollection.set(film.filmInfo.id, MoviePresenter);
   }
 
-  _renderCards(listComponent, filmsList, from, to) {
+  _renderCards(presenterCollection, listComponent, filmsList, from, to) {
     const container = listComponent.getElement().querySelector('.films-list__container');
     filmsList.slice(from, to)
       .forEach((film) => {
-        this._renderCard(container, film);
+        this._renderCard(presenterCollection, container, film);
       });
   }
 
