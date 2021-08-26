@@ -1,4 +1,8 @@
+import {getDatesDifference} from './date.js';
+
 const SortTypes = {
+  DEFAULT: 'default',
+  DATE: 'date',
   RATING: 'rating',
   COMMENTS: 'comments',
 };
@@ -15,8 +19,15 @@ const sortFilmByComments = (filmA, filmB) => {
   return commentsCountB - commentsCountA;
 };
 
+const sortFilmByDate = (filmA, filmB) => {
+  const dateA = filmA.filmInfo.release.date;
+  const dateB = filmB.filmInfo.release.date;
+  return getDatesDifference(dateB, dateA);
+};
+
 export {
   SortTypes,
   sortFilmByRating,
-  sortFilmByComments
+  sortFilmByComments,
+  sortFilmByDate
 };
