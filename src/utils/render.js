@@ -1,6 +1,7 @@
 import AbstractComponent from '../abstract-component.js';
 
 const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
   AFTEREND: 'afterend',
   BEFOREEND: 'beforeend',
 };
@@ -14,6 +15,9 @@ const render = (container, child, place = RenderPosition.BEFOREEND) => {
   }
 
   switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(child);
+      break;
     case RenderPosition.BEFOREEND:
       container.append(child);
       break;
@@ -36,9 +40,24 @@ const remove = (component) => {
   component.removeElement();
 };
 
+const replace = (newChild, oldChild) => {
+  if (newChild instanceof AbstractComponent) {
+    newChild = newChild.getElement();
+  }
+  if (oldChild instanceof AbstractComponent) {
+    oldChild = oldChild.getElement();
+  }
+  const parent = oldChild.parentElement;
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error('Can\'t  replace unexisting elements');
+  }
+  parent.replaceChild(newChild, oldChild);
+};
+
 export {
   render,
   remove,
+  replace,
   createElement,
   RenderPosition
 };

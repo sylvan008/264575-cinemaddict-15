@@ -6,6 +6,9 @@ const CONTROL_ACTIVE_CLASS = 'film-details__control-button--active';
 const DATE_TEMPLATE = 'D MMMM YYYY';
 const CallbackTypes = {
   CLOSE: 'close',
+  ADD_HISTORY: 'addToHistory',
+  ADD_WATCHLIST: 'addToWatchlist',
+  ADD_FAVORITE: 'addToFavorite',
 };
 
 const filmDetailControlTypes = [
@@ -67,7 +70,7 @@ const tableDetailsModel = [
   {
     title: 'Genres',
     key: 'genre',
-    handler: (genres) => genres.map(createGenreItem),
+    handler: (genres) => genres.map(createGenreItem).join(''),
   },
 ];
 
@@ -160,6 +163,9 @@ export default class Popup extends AbstractComponent {
      */
     this._film = film;
     this._closeHandler = this._closeHandler.bind(this);
+    this._filmAddToFavoriteHandler = this._filmAddToFavoriteHandler.bind(this);
+    this._filmAddToHistoryHandler = this._filmAddToHistoryHandler.bind(this);
+    this._filmAddToWatchlistHandler = this._filmAddToWatchlistHandler.bind(this);
   }
 
   /**
@@ -167,6 +173,30 @@ export default class Popup extends AbstractComponent {
    */
   getTemplate() {
     return createPopupTemplate(this._film);
+  }
+
+  setCloseHandler(callback) {
+    this._callback[CallbackTypes.CLOSE] = callback;
+    this.getElement().querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeHandler);
+  }
+
+  setAddFilmToFavoriteHandler(callback) {
+    this._callback[CallbackTypes.ADD_FAVORITE] = callback;
+    this.getElement().querySelector('.film-details__control-button--favorite')
+      .addEventListener('click', this._filmAddToFavoriteHandler);
+  }
+
+  setAddFilmToHistoryHandler(callback) {
+    this._callback[CallbackTypes.ADD_HISTORY] = callback;
+    this.getElement().querySelector('.film-details__control-button--watched')
+      .addEventListener('click', this._filmAddToHistoryHandler);
+  }
+
+  setAddFilmToWatchlistHandler(callback) {
+    this._callback[CallbackTypes.ADD_WATCHLIST] = callback;
+    this.getElement().querySelector('.film-details__control-button--watchlist')
+      .addEventListener('click', this._filmAddToWatchlistHandler);
   }
 
   /**
@@ -178,8 +208,18 @@ export default class Popup extends AbstractComponent {
     this._callback[CallbackTypes.CLOSE]();
   }
 
-  setCloseHandler(callback) {
-    this._callback[CallbackTypes.CLOSE] = callback;
-    this.getElement().addEventListener('click', this._closeHandler);
+  _filmAddToWatchlistHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.ADD_WATCHLIST]();
+  }
+
+  _filmAddToHistoryHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.ADD_HISTORY]();
+  }
+
+  _filmAddToFavoriteHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.ADD_FAVORITE]();
   }
 }
