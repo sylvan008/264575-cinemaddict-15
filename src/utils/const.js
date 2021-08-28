@@ -18,7 +18,6 @@ const FilmListTypes = {
   },
 };
 
-
 const FilmControlTypes = {
   WATCHLIST: 'watchlist',
   WATCHED: 'alreadyWatched',
@@ -32,16 +31,9 @@ const NavigationTypes = {
   FAVORITES: 'favorites',
 };
 
-const SortTypes = {
-  DEFAULT: 'default',
-  DATE: 'date',
-  RATING: 'rating',
-};
-
 export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
-  NavigationTypes,
-  SortTypes
+  NavigationTypes
 };

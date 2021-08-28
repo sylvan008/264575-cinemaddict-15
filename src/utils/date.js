@@ -14,9 +14,12 @@ const getRelativeDate = (date) => dayjs(date).fromNow();
 
 const getDateDifferenceFromNow = (date, breakdownRange = BREAKDOWN_RANGE_DAY) => dayjs().diff(date, breakdownRange);
 
+const getDatesDifference = (dateA, dateB) => dayjs(dateA).diff(dayjs(dateB));
+
 export {
   getRelativeDate,
   getHumanizeDate,
   getHumanizeFilmDuration,
-  getDateDifferenceFromNow
+  getDateDifferenceFromNow,
+  getDatesDifference
 };
