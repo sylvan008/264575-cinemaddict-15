@@ -1,6 +1,12 @@
 import SmartComponent from '../smart-component.js';
 import {emotions} from '../utils/const.js';
 
+const Keys = {
+  META: 'Meta',
+  ENTER: 'Enter',
+  CTRL: 'Control',
+};
+
 const CallbackTypes = {
   SUBMIT: 'submit',
   CHANGE: 'change',
@@ -69,7 +75,7 @@ export default class NewComment extends SmartComponent {
 
   _emotionChangeHandler(evt) {
     evt.preventDefault();
-    if (!evt.target.matches('.film-details__emoji-item')) {
+    if (!evt.target.closest('.film-details__emoji-item')) {
       return;
     }
     this.updateData({
@@ -80,7 +86,7 @@ export default class NewComment extends SmartComponent {
   _commentInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      comment: evt.target.value,
+      comment: evt.target.value.trim(),
     },true);
   }
 
@@ -96,10 +102,26 @@ export default class NewComment extends SmartComponent {
     this.getElement()
       .querySelector('.film-details__comment-input')
       .addEventListener('input', this._commentInputHandler);
+    this._setSubmitShortKeys();
   }
 
-  _submitFormHandler(evt) {
-    evt.preventDefault();
+  _setSubmitShortKeys() {
+    const pressed = new Set();
+    const textarea = this.getElement().querySelector('.film-details__comment-input');
+
+    textarea.addEventListener('keydown', (evt) => {
+      pressed.add(evt.key);
+      if (pressed.has(Keys.ENTER) && (pressed.has(Keys.META) || pressed.has(Keys.CTRL))) {
+        this._submitFormHandler();
+      }
+    });
+
+    textarea.addEventListener('keyup', (evt) => {
+      pressed.delete(evt.key);
+    });
+  }
+
+  _submitFormHandler() {
     this._callback[CallbackTypes.SUBMIT](NewComment.parseFormToData(this._data));
   }
 }

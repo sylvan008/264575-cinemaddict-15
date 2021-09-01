@@ -46,10 +46,9 @@ export default class SortMenu extends AbstractComponent {
 
   _sortMenuClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.closest('a') === null) {
-      return;
+    if (evt.target.closest('.sort__button')) {
+      this._callback[CallbackTypes.SORT_CHANGE](evt.target.dataset.sortType);
     }
-    this._callback[CallbackTypes.SORT_CHANGE](evt.target.dataset.sortType);
   }
 
   setSortChangeHandler(callback) {
