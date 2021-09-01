@@ -34,6 +34,7 @@ export default class Movie {
     this._handleAddToFavoriteButtonClick = this._handleAddToFavoriteButtonClick.bind(this);
     this._handleAddToHistoryButtonClick = this._handleAddToHistoryButtonClick.bind(this);
     this._handleAddToWatchlistButtonClick = this._handleAddToWatchlistButtonClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
   }
 
   init(film, comments) {
@@ -88,9 +89,7 @@ export default class Movie {
   _handleFilmCardClick() {
     this._changeMode();
     this._popupComponent = new PopupView(this._film);
-
     this._renderPopupComments(this._getFilmComments());
-    this._renderNewComment();
 
     this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
     this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
@@ -98,6 +97,10 @@ export default class Movie {
     this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
 
     render(this._filmCardComponent, this._popupComponent);
+
+    this._newCommentComponent = new NewCommentView();
+    this._newCommentComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._renderNewComment();
 
     document.addEventListener('keydown', this._escKeyDownHandler);
     document.body.classList.add(HIDE_OVERFLOW);
@@ -133,6 +136,11 @@ export default class Movie {
     this._changeData(Object.assign({}, this._film, {userDetails}));
   }
 
+  _handleFormSubmit(localComment) {
+    // eslint-disable-next-line no-console
+    console.log(localComment); // TODO: временный вывод
+  }
+
   _renderPopupComments(comments) {
     const filmDetailBottomContainer = this._popupComponent.getElement()
       .querySelector('.film-details__bottom-container');
@@ -142,6 +150,6 @@ export default class Movie {
   _renderNewComment() {
     const commentsContainer = this._popupComponent.getElement()
       .querySelector('.film-details__comments-wrap');
-    render(commentsContainer, new NewCommentView());
+    render(commentsContainer, this._newCommentComponent);
   }
 }

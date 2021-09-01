@@ -69,9 +69,10 @@ export class Board {
 
   _clearFilmList() {
     const destroyFilmPresenter = (presenter) => presenter.destroy();
-    const presenterCollections = Object.values(this._presenters);
-    presenterCollections.forEach((collection) => collection.forEach(destroyFilmPresenter));
-    presenterCollections.forEach((collection) => collection.clear());
+    for (const presenterName in this._presenters) {
+      this._presenters[presenterName].forEach(destroyFilmPresenter);
+      this._presenters[presenterName].clear();
+    }
     this._renderedCardCount = CARDS_LOAD_STEP;
     remove(this._showMoreButtonComponent);
     remove(this._sortMenuComponent);

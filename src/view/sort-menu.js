@@ -23,7 +23,11 @@ const CallbackTypes = {
 const createSortMenuTemplate = (currentSortType) =>
   `<ul class="sort">
     ${sortItems.map(({type, text}) =>
-    `<li><a href="#" class="sort__button ${type === currentSortType ? ITEM_ACTIVE_CLASS : ''}" data-sort-type="${type}">${text}</a></li>`,
+    `<li>
+      <a href="#" class="sort__button ${type === currentSortType ? ITEM_ACTIVE_CLASS : ''}" data-sort-type="${type}">
+        ${text}
+      </a>
+    </li>`,
   ).join('')}</ul>`;
 
 export default class SortMenu extends AbstractComponent {
@@ -42,10 +46,9 @@ export default class SortMenu extends AbstractComponent {
 
   _sortMenuClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'A') {
-      return;
+    if (evt.target.closest('.sort__button')) {
+      this._callback[CallbackTypes.SORT_CHANGE](evt.target.dataset.sortType);
     }
-    this._callback[CallbackTypes.SORT_CHANGE](evt.target.dataset.sortType);
   }
 
   setSortChangeHandler(callback) {
