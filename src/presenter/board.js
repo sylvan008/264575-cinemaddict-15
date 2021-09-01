@@ -30,15 +30,19 @@ const defaultStatistics = {
 };
 
 export class Board {
-  constructor(boardContainer, filmsModel) {
+  constructor(boardContainer, filmsModel, commentsModel) {
     this._renderedCardCount = CARDS_LOAD_STEP;
     this._currentSortType = SortTypes.DEFAULT;
-    this._filmsModel =filmsModel;
+
+    this._filmsModel = filmsModel;
+    this._commentsModel = commentsModel;
+
     this._presenters = {
       [PresenterListTypes.COMMON]: new Map(),
       [PresenterListTypes.RATING]: new Map(),
       [PresenterListTypes.COMMENTED]: new Map(),
     };
+
     this._userStatistics = defaultStatistics;
     this._boardContainer = boardContainer;
 
@@ -68,6 +72,10 @@ export class Board {
 
   _getFilms() {
     return this._filmsModel.films;
+  }
+
+  _getComments() {
+    return this._commentsModel.comments;
   }
 
   _clearFilmList() {
