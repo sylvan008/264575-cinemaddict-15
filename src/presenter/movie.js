@@ -4,6 +4,7 @@ import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
 import {remove, render, replace} from '../utils/render.js';
 import {isEscapeKey} from '../utils/common.js';
+import {UpdateType, UserAction} from '../utils/const.js';
 
 const HIDE_OVERFLOW = 'hide-overflow';
 const Mode = {
@@ -119,21 +120,33 @@ export default class Movie {
     const userDetails = {...this._film.userDetails};
     userDetails.alreadyWatched = !userDetails.alreadyWatched;
 
-    this._changeData(Object.assign({}, this._film, {userDetails}));
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      Object.assign({}, this._film, {userDetails}),
+    );
   }
 
   _handleAddToWatchlistButtonClick() {
     const userDetails = {...this._film.userDetails};
     userDetails.watchlist = !userDetails.watchlist;
 
-    this._changeData(Object.assign({}, this._film, {userDetails}));
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      Object.assign({}, this._film, {userDetails}),
+    );
   }
 
   _handleAddToFavoriteButtonClick() {
     const userDetails = {...this._film.userDetails};
     userDetails.favorite = !userDetails.favorite;
 
-    this._changeData(Object.assign({}, this._film, {userDetails}));
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      Object.assign({}, this._film, {userDetails}),
+    );
   }
 
   _handleFormSubmit(localComment) {

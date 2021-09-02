@@ -31,9 +31,21 @@ const NavigationTypes = {
   FAVORITES: 'favorites',
 };
 
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
-  NavigationTypes
+  NavigationTypes,
+  UserAction,
+  UpdateType
 };

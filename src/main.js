@@ -23,5 +23,5 @@ render(headerElement, new UserProfile());
 
 const boardPresenter = new Board(mainElement, filmsModel, commentsModel);
 
-boardPresenter.init(filmsData, commentsData);
+boardPresenter.init();
 render(footerStatisticsElement, new FooterStatisticsView(filmsData.length));
