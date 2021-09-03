@@ -6,7 +6,7 @@ import NoFilmView from '../view/no-film.js';
 import ShowMoreButtonView from '../view/show-more.js';
 import SortMenu from '../view/sort-menu.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
-import {FilmListTypes, NavigationTypes} from '../utils/const.js';
+import {FilmListTypes, NavigationTypes, UpdateType, UserAction} from '../utils/const.js';
 import {sortFilmByComments, sortFilmByDate, sortFilmByRating, SortTypes} from '../utils/sort.js';
 
 const CARDS_LOAD_STEP = 5;
@@ -50,6 +50,9 @@ export class Board {
     this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
 
     this._boardComponent = new FilmsBoard();
     this._showMoreButtonComponent = new ShowMoreButtonView();
@@ -111,6 +114,11 @@ export class Board {
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_FILM:
+        this._filmsModel.updateFilm(updateType, update);
+        break;
+    }
   }
 
   _handleModelEvent(updateType, data) {
@@ -118,6 +126,11 @@ export class Board {
     // В зависимости от типа изменений, выбираем что делать
     // - обновить всю доску
     // - обновить список
+    switch (updateType) {
+      case UpdateType.MINOR:
+        this._updatePresenters(data);
+        break;
+    }
   }
 
   _handleShowMoreButtonCLick() {
@@ -248,5 +261,14 @@ export class Board {
   _renderShowMoreButton() {
     render(this._allFilmListComponent, this._showMoreButtonComponent);
     this._showMoreButtonComponent.setClickHandler(this._handleShowMoreButtonCLick);
+  }
+
+  _updatePresenters(data) {
+    Object.values(this._presenters).forEach((collection) => {
+      const film = collection.get(data.filmInfo.id);
+      if (film) {
+        film.init(data, this._getComments());
+      }
+    });
   }
 }
