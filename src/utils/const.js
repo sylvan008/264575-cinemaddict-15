@@ -25,7 +25,7 @@ const FilmControlTypes = {
 };
 
 const NavigationTypes = {
-  ALL: 'all',
+  DEFAULT: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',

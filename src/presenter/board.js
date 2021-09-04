@@ -1,13 +1,12 @@
 import Movie from './movie.js';
 import FilmsBoard from '../view/films-board.js';
 import FilmListView from '../view/film-list.js';
-import MainNavigation from '../view/main-navigation.js';
 import NoFilmView from '../view/no-film.js';
 import ShowMoreButtonView from '../view/show-more.js';
 import SortMenu from '../view/sort-menu.js';
 import UserProfile from '../view/user-profile.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
-import {FilmListTypes, NavigationTypes, UpdateType, UserAction} from '../utils/const.js';
+import {FilmListTypes, UpdateType, UserAction} from '../utils/const.js';
 import {sortFilmByComments, sortFilmByDate, sortFilmByRating, SortTypes} from '../utils/sort.js';
 
 const CARDS_LOAD_STEP = 5;
@@ -16,17 +15,6 @@ const PresenterListTypes = {
   COMMON: 'filmPresenter',
   RATING: 'filmRatingPresenter',
   COMMENTED: 'filmCommentedPresenter',
-};
-const StatisticTypes = {
-  ALREADY_WATCHED: 'alreadyWatched',
-  WATCHLIST: 'watchlist',
-  FAVORITE: 'favorite',
-};
-
-const defaultStatistics = {
-  [NavigationTypes.HISTORY]: 0,
-  [NavigationTypes.WATCHLIST]: 0,
-  [NavigationTypes.FAVORITES]: 0,
 };
 
 export class Board {
@@ -46,7 +34,6 @@ export class Board {
       [PresenterListTypes.RATING]: new Map(),
       [PresenterListTypes.COMMENTED]: new Map(),
     };
-    this._userStatistics = defaultStatistics;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -58,7 +45,6 @@ export class Board {
     this._commentsModel.addObserver(this._handleModelEvent);
 
     this._userProfileComponent = null;
-    this._mainNavigationComponent = null;
     this._sortMenuComponent = null;
     this._showMoreButtonComponent = null;
 
@@ -66,9 +52,6 @@ export class Board {
   }
 
   init() {
-    this._countUserStatistics(this._getFilms());
-
-    this._mainNavigationComponent = new MainNavigation(this._userStatistics);
     this._allFilmListComponent = new FilmListView(FilmListTypes.ALL_MOVIES);
     this._commentedFilmListComponent = new FilmListView(FilmListTypes.COMMENTED_MOVIES);
     this._topFilmListComponent = new FilmListView(FilmListTypes.TOP_MOVIES);
@@ -95,7 +78,6 @@ export class Board {
 
   _clearBoard() {
     remove(this._userProfileComponent);
-    remove(this._mainNavigationComponent);
     this._clearFilmList();
   }
 
@@ -107,16 +89,6 @@ export class Board {
     this._renderedCardCount = CARDS_LOAD_STEP;
     remove(this._showMoreButtonComponent);
     remove(this._sortMenuComponent);
-  }
-
-  _countStatistic(filmsList, propertyName) {
-    return filmsList.reduce((acc, {userDetails}) => acc + Number(userDetails[propertyName]), 0);
-  }
-
-  _countUserStatistics(filmsList) {
-    this._userStatistics[NavigationTypes.WATCHLIST] = this._countStatistic(filmsList, StatisticTypes.WATCHLIST);
-    this._userStatistics[NavigationTypes.FAVORITES] = this._countStatistic(filmsList, StatisticTypes.FAVORITE);
-    this._userStatistics[NavigationTypes.HISTORY] = this._countStatistic(filmsList, StatisticTypes.ALREADY_WATCHED);
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -224,15 +196,15 @@ export class Board {
 
   _renderBoard() {
     this._renderUserProfile();
-    this._renderMainNavigation();
-    this._renderFilmsBoard();
 
     if (!this._getFilms().length) {
+      this._renderFilmsBoard();
       this._renderNoFilms();
       return;
     }
 
     this._renderSortMenu();
+    this._renderFilmsBoard();
     this._renderAllFilmList(0, this._renderedCardCount);
     this._renderCommentedFilmList(0, CARDS_EXTRA_LOAD_STEP);
     this._renderTopFilmList(0, CARDS_EXTRA_LOAD_STEP);
@@ -256,10 +228,6 @@ export class Board {
     render(this._mainElement, this._filmsBoardComponent);
   }
 
-  _renderMainNavigation() {
-    render(this._mainElement, this._mainNavigationComponent);
-  }
-
   _renderNoFilms() {
     render(this._filmsBoardComponent, new NoFilmView(), RenderPosition.AFTERBEGIN);
   }
@@ -272,7 +240,7 @@ export class Board {
     this._sortMenuComponent = new SortMenu(this._currentSortType);
     this._sortMenuComponent.setSortChangeHandler(this._handleSortTypeChange);
 
-    render(this._mainNavigationComponent, this._sortMenuComponent, RenderPosition.AFTEREND);
+    render(this._mainElement, this._sortMenuComponent, RenderPosition.BEFOREEND);
   }
 
   _renderShowMoreButton() {
@@ -287,7 +255,7 @@ export class Board {
   }
 
   _renderUserProfile() {
-    render(this._headerElement, new UserProfile(this._userStatistics[NavigationTypes.HISTORY]));
+    render(this._headerElement, new UserProfile(0));
   }
 
   _updatePresenters(data) {
