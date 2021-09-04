@@ -19,6 +19,7 @@ export default class Filters  extends AbstractObserver {
     if (this._filter === update) {
       return;
     }
+    this._filter = update;
     this._notify(updateType, update);
   }
 }

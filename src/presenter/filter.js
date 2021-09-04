@@ -1,5 +1,5 @@
 import MainNavigation from '../view/main-navigation.js';
-import {render, RenderPosition} from '../utils/render.js';
+import {remove, render, RenderPosition} from '../utils/render.js';
 import {FilmControlTypes as StatisticTypes, NavigationTypes} from '../utils/const.js';
 
 const defaultStatistics = {
@@ -17,6 +17,11 @@ export default class Filter {
     this._userStatistics = defaultStatistics;
 
     this._filtersComponent = null;
+
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelAction = this._handleModelAction.bind(this);
+
+    this._filtersModel.addObserver(this._handleModelAction);
   }
 
   init() {
@@ -42,11 +47,21 @@ export default class Filter {
     return this._filmsModel.films;
   }
 
+  _handleViewAction(updateType, update) {
+    this._filtersModel.updateFilter(updateType, update);
+  }
+
+  _handleModelAction(updateType, update) {
+    this._renderFilters();
+  }
+
   _renderFilters() {
     if (this._filtersComponent !== null) {
+      remove(this._filtersComponent);
       this._filtersComponent = null;
     }
     this._filtersComponent = new MainNavigation(this._getFilter(), this._userStatistics);
+    this._filtersComponent.setFilterChangeHandler(this._handleViewAction);
     render(this._filterContainer, this._filtersComponent, RenderPosition.AFTERBEGIN);
   }
 }

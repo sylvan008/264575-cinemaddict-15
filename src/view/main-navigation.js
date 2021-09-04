@@ -1,5 +1,5 @@
 import AbstractComponent from '../abstract-component.js';
-import {NavigationTypes} from '../utils/const.js';
+import {NavigationTypes, UpdateType} from '../utils/const.js';
 
 const NAVIGATION_ACTIVE_CLASS = 'main-navigation__item--active';
 const navigationItems = [
@@ -28,6 +28,9 @@ const navigationItems = [
     isCalculated: true,
   },
 ];
+const CallbackTypes = {
+  CHANGE_FILTER: 'CHANGE_FILTER',
+};
 
 const createItemCount = (count) => `<span class="main-navigation__item-count">${count}</span>`;
 
@@ -35,7 +38,7 @@ const createNavigationItem = (navItem, navigationStatistics, activeFilter) => {
   const {type, link, text, isCalculated} = navItem;
   const activeClass = activeFilter === type ? NAVIGATION_ACTIVE_CLASS : '';
 
-  return `<a href="${link}" class="main-navigation__item ${activeClass}">
+  return `<a href="${link}" class="main-navigation__item ${activeClass}" data-filter="${type}">
       ${text}
       ${isCalculated ? createItemCount(navigationStatistics[type]) : ''}
     </a>
@@ -66,6 +69,8 @@ export default class MainNavigation extends AbstractComponent {
      */
     this._statistics = statistics;
     this._activeFilter = activeFilter;
+
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
   }
 
   /**
@@ -73,5 +78,19 @@ export default class MainNavigation extends AbstractComponent {
    */
   getTemplate() {
     return createNavigationTemplate(this._activeFilter, this._statistics);
+  }
+
+  setFilterChangeHandler(callback) {
+    this._callback[CallbackTypes.CHANGE_FILTER] = callback;
+    this.getElement()
+      .querySelector('.main-navigation__items')
+      .addEventListener('click', this._filterChangeHandler);
+  }
+
+  _filterChangeHandler(evt) {
+    if (evt.target.closest('.main-navigation__item')) {
+      evt.preventDefault();
+      this._callback[CallbackTypes.CHANGE_FILTER](UpdateType.MAJOR, evt.target.dataset.filter);
+    }
   }
 }
