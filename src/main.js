@@ -25,7 +25,7 @@ commentsModel.comments = commentsData;
 const filtersPresenter = new Filter(mainElement, filtersModel, filmsModel);
 filtersPresenter.init();
 
-const boardPresenter = new Board(pageElement, filmsModel, commentsModel);
+const boardPresenter = new Board(pageElement, filmsModel, commentsModel, filtersModel);
 boardPresenter.init();
 
 render(footerStatisticsElement, new FooterStatisticsView(filmsData.length));

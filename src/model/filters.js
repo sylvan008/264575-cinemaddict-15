@@ -1,18 +1,14 @@
 import AbstractObserver from '../utils/abstract-observer.js';
-import {NavigationTypes} from '../utils/const.js';
+import {FilterTypes} from '../utils/const.js';
 
 export default class Filters  extends AbstractObserver {
   constructor() {
     super();
-    this._filter = NavigationTypes.DEFAULT;
+    this._filter = FilterTypes.ALL;
   }
 
-  get filter() {
+  get activeFilter() {
     return this._filter;
-  }
-
-  set filter(activeFilter) {
-    this._filter = activeFilter;
   }
 
   updateFilter(updateType, update) {

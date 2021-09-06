@@ -24,8 +24,8 @@ const FilmControlTypes = {
   FAVORITE: 'favorite',
 };
 
-const NavigationTypes = {
-  DEFAULT: 'all',
+const FilterTypes = {
+  ALL: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',
@@ -45,7 +45,7 @@ export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
-  NavigationTypes,
+  FilterTypes,
   UserAction,
   UpdateType
 };

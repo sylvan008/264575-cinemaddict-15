@@ -4,6 +4,7 @@ const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   AFTEREND: 'afterend',
   BEFOREEND: 'beforeend',
+  BEFOREBEGIN: 'beforebegin',
 };
 
 const render = (container, child, place = RenderPosition.BEFOREEND) => {
@@ -23,6 +24,10 @@ const render = (container, child, place = RenderPosition.BEFOREEND) => {
       break;
     case RenderPosition.AFTEREND:
       container.after(child);
+      break;
+    case RenderPosition.BEFOREBEGIN:
+      container.before(child);
+      break;
   }
 };
 
