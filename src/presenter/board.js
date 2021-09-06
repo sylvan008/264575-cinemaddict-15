@@ -61,9 +61,9 @@ export class Board {
   }
 
   _getFilms(sortType = SortTypes.DEFAULT) {
-    const activeFilter = this._filtersModel.activeFilter;
+    this._filterType = this._filtersModel.activeFilter;
     const films = this._filmsModel.films;
-    const filteredFilms = filter[activeFilter](films);
+    const filteredFilms = filter[this._filterType](films);
 
     switch (sortType) {
       case SortTypes.RATING:
@@ -89,6 +89,9 @@ export class Board {
     if (resetRenderedCardCount) {
       this._renderedCardCount = CARDS_LOAD_STEP;
     }
+    if (this._noFilmsComponent) {
+      remove(this._noFilmsComponent);
+    }
     remove(this._allFilmListComponent);
     remove(this._topFilmListComponent);
     remove(this._commentedFilmListComponent);
@@ -104,7 +107,7 @@ export class Board {
     }
   }
 
-  _handleModelEvent(updateType, data) {
+  _handleModelEvent(updateType) {
     // В зависимости от типа изменений, выбираем что делать
     // - обновить всю доску
     // - обновить список
@@ -235,7 +238,8 @@ export class Board {
   }
 
   _renderNoFilms() {
-    render(this._filmsBoardComponent, new NoFilmView(), RenderPosition.AFTERBEGIN);
+    this._noFilmsComponent = new NoFilmView(this._filterType);
+    render(this._filmsBoardComponent, this._noFilmsComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderSortMenu() {
