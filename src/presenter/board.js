@@ -81,13 +81,16 @@ export class Board {
     return this._commentsModel.comments;
   }
 
-  _clearBoard(resetRenderedCardCount = false) {
+  _clearBoard({resetRenderedCardCount = false, resetSort = false} = {}) {
     for (const presenterName in this._presenters) {
       this._presenters[presenterName].forEach((presenter) => presenter.destroy());
       this._presenters[presenterName].clear();
     }
     if (resetRenderedCardCount) {
       this._renderedCardCount = CARDS_LOAD_STEP;
+    }
+    if (resetSort) {
+      this._currentSortType = SortTypes.DEFAULT;
     }
     if (this._noFilmsComponent) {
       remove(this._noFilmsComponent);
@@ -117,7 +120,7 @@ export class Board {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        this._clearBoard(true);
+        this._clearBoard({resetRenderedCardCount: true, resetSort: true});
         this._renderBoard();
         break;
     }

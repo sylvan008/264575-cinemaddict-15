@@ -22,7 +22,7 @@ export default class Filter {
     const filters = this._getFilters();
     const prevFilterComponent = this._filtersComponent;
 
-    this._filtersComponent = new MainNavigation(this._filtersModel.filter, filters);
+    this._filtersComponent = new MainNavigation(this._filtersModel.activeFilter, filters);
     this._filtersComponent.setFilterChangeHandler(this._handleViewAction);
 
     if (!prevFilterComponent) {
