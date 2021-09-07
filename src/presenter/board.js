@@ -107,6 +107,12 @@ export class Board {
       case UserAction.UPDATE_FILM:
         this._filmsModel.updateFilm(updateType, update);
         break;
+      case UserAction.DELETE_COMMENT:
+        this._commentsModel.deleteComment(update);
+        break;
+      case UserAction.ADD_COMMENT:
+        this._commentsModel.addComment(update);
+        break;
     }
   }
 

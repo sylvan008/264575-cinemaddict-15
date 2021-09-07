@@ -90,7 +90,7 @@ const generateUserDetails = () => {
 const generateComments = (maxCommentsCount=5) => (
   new Array(getRandomInteger(0, maxCommentsCount))
     .fill()
-    .map(() => getRandomInteger(0, 100))
+    .map(() => getRandomInteger(0, 100).toString())
 );
 
 const generateFilm = () => {

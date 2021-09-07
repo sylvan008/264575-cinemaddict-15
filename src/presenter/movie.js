@@ -3,8 +3,9 @@ import PopupView from '../view/popup.js';
 import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
 import {remove, render, replace} from '../utils/render.js';
-import {isEscapeKey} from '../utils/common.js';
+import {getId, isEscapeKey} from '../utils/common.js';
 import {UpdateType, UserAction} from '../utils/const.js';
+import {getDateNow} from '../utils/date.js';
 
 const HIDE_OVERFLOW = 'hide-overflow';
 const Mode = {
@@ -35,7 +36,8 @@ export default class Movie {
     this._handleAddToFavoriteButtonClick = this._handleAddToFavoriteButtonClick.bind(this);
     this._handleAddToHistoryButtonClick = this._handleAddToHistoryButtonClick.bind(this);
     this._handleAddToWatchlistButtonClick = this._handleAddToWatchlistButtonClick.bind(this);
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleCommentSubmit = this._handleCommentSubmit.bind(this);
+    this._handleCommentDelete = this._handleCommentDelete.bind(this);
   }
 
   init(film, comments) {
@@ -100,7 +102,7 @@ export default class Movie {
     render(this._filmCardComponent, this._popupComponent);
 
     this._newCommentComponent = new NewCommentView();
-    this._newCommentComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
     this._renderNewComment();
 
     document.addEventListener('keydown', this._escKeyDownHandler);
@@ -149,15 +151,50 @@ export default class Movie {
     );
   }
 
-  _handleFormSubmit(localComment) {
-    // eslint-disable-next-line no-console
-    console.log(localComment); // TODO: временный вывод
+  _handleCommentDelete(commentId) {
+    const comments = this._film.comments.filter((id) => id !== commentId);
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      commentId,
+    );
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      Object.assign({}, this._film, {comments}),
+    );
+  }
+
+  _handleCommentSubmit(newComment) {
+    const comment = Object.assign({}, newComment, {
+      id: getId(),
+      date: getDateNow(),
+      author: 'Keks', // TODO Вставить имя пользователя
+    });
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      comment,
+    );
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      Object.assign({}, this._film, {
+        comments: [
+          ...this._film.comments,
+          comment.id,
+        ],
+      }),
+    );
   }
 
   _renderPopupComments(comments) {
     const filmDetailBottomContainer = this._popupComponent.getElement()
       .querySelector('.film-details__bottom-container');
-    render(filmDetailBottomContainer, new CommentsView(comments));
+
+    this._popupComments = new CommentsView(comments);
+    this._popupComments.setCommentDeleteHandler(this._handleCommentDelete);
+    render(filmDetailBottomContainer, this._popupComments);
   }
 
   _renderNewComment() {

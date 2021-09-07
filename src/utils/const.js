@@ -33,6 +33,8 @@ const FilterTypes = {
 
 const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT',
 };
 
 const UpdateType = {

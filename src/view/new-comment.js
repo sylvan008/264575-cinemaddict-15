@@ -122,6 +122,6 @@ export default class NewComment extends SmartComponent {
   }
 
   _submitFormHandler() {
-    this._callback[CallbackTypes.SUBMIT](NewComment.parseFormToData(this._data));
+    this._callback[CallbackTypes.SUBMIT](NewComment.parseDataToForm(this._data));
   }
 }
