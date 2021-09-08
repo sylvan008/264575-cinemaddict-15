@@ -160,7 +160,7 @@ export default class Movie {
     );
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign({}, this._film, {comments}),
     );
   }
@@ -178,7 +178,7 @@ export default class Movie {
     );
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign({}, this._film, {
         comments: [
           ...this._film.comments,

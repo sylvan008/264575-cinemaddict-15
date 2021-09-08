@@ -116,11 +116,14 @@ export class Board {
     }
   }
 
-  _handleModelEvent(updateType) {
+  _handleModelEvent(updateType, update) {
     // В зависимости от типа изменений, выбираем что делать
     // - обновить всю доску
     // - обновить список
     switch (updateType) {
+      case UpdateType.PATCH:
+        this._updatePresenters(update);
+        break;
       case UpdateType.MINOR:
         this._clearBoard();
         this._renderBoard();
