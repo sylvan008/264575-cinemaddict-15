@@ -36,8 +36,9 @@ const createNewCommentTemplate = ({emotion, comment, isEmotion}) =>
 `;
 
 export default class NewComment extends SmartComponent {
-  constructor() {
+  constructor(formElement) {
     super();
+    this._formElement = formElement;
     this._data = NewComment.parseFormToData({
       emotion: null,
       comment: '',
@@ -69,8 +70,7 @@ export default class NewComment extends SmartComponent {
 
   setFormSubmitHandler(callback) {
     this._callback[CallbackTypes.SUBMIT] = callback;
-    document.querySelector('.film-details__inner')
-      .addEventListener(CallbackTypes.SUBMIT, this._submitFormHandler);
+    this._formElement.addEventListener(CallbackTypes.SUBMIT, this._submitFormHandler);
   }
 
   _emotionChangeHandler(evt) {

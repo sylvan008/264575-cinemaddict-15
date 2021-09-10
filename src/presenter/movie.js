@@ -7,6 +7,7 @@ import {getId, isEscapeKey} from '../utils/common.js';
 import {UpdateType, UserAction} from '../utils/const.js';
 import {getDateNow} from '../utils/date.js';
 
+const START_SCROLL = 0;
 const HIDE_OVERFLOW = 'hide-overflow';
 const Mode = {
   OPEN: 'open',
@@ -29,6 +30,7 @@ export default class Movie {
 
     this._filmCardComponent = null;
     this._popupComponent = null;
+    this._scrollTop = START_SCROLL;
 
     this._handleFilmCardClick = this._handleFilmCardClick.bind(this);
     this._handlePopupCloseButtonClick = this._handlePopupCloseButtonClick.bind(this);
@@ -38,6 +40,7 @@ export default class Movie {
     this._handleAddToWatchlistButtonClick = this._handleAddToWatchlistButtonClick.bind(this);
     this._handleCommentSubmit = this._handleCommentSubmit.bind(this);
     this._handleCommentDelete = this._handleCommentDelete.bind(this);
+    this._handleScrollPopup = this._handleScrollPopup.bind(this);
   }
 
   init(film, comments) {
@@ -46,11 +49,7 @@ export default class Movie {
     this._film = film;
     this._comments = comments;
 
-    this._filmCardComponent = new FilmCardView(this._film);
-    this._filmCardComponent.setCardOpenHandler(this._handleFilmCardClick);
-    this._filmCardComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
-    this._filmCardComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
-    this._filmCardComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
+    this._createFilmCardComponent(this._film);
 
     if (prevFilmCardComponent === null) {
       render(this._cardListContainer, this._filmCardComponent);
@@ -78,6 +77,35 @@ export default class Movie {
     }
   }
 
+  _createFilmCardComponent(film) {
+    this._filmCardComponent = new FilmCardView(film);
+    this._filmCardComponent.setCardOpenHandler(this._handleFilmCardClick);
+    this._filmCardComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
+    this._filmCardComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
+    this._filmCardComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
+  }
+
+  _createFilmPopupComponent(film) {
+    this._popupComponent = new PopupView(film);
+    this._renderPopupComments(this._getFilmComments());
+
+    this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
+    this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
+    this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
+    this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
+    this._popupComponent.setScrollTopHandler(this._handleScrollPopup);
+
+    this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
+  }
+
+  _disableBodyOverflow() {
+    document.body.classList.add(HIDE_OVERFLOW);
+  }
+
+  _enableBodyOverflow() {
+    document.body.classList.remove(HIDE_OVERFLOW);
+  }
+
   _escKeyDownHandler(evt) {
     if (!isEscapeKey(evt)) {
       return;
@@ -91,22 +119,10 @@ export default class Movie {
 
   _handleFilmCardClick() {
     this._changeMode();
-    this._popupComponent = new PopupView(this._film);
-    this._renderPopupComments(this._getFilmComments());
-
-    this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
-    this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
-    this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
-    this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
-
-    render(this._filmCardComponent, this._popupComponent);
-
-    this._newCommentComponent = new NewCommentView();
-    this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
-    this._renderNewComment();
-
+    this._createFilmPopupComponent(this._film);
+    this._renderPopupComponent();
     document.addEventListener('keydown', this._escKeyDownHandler);
-    document.body.classList.add(HIDE_OVERFLOW);
+    this._disableBodyOverflow();
     this._mode = Mode.OPEN;
   }
 
@@ -114,8 +130,9 @@ export default class Movie {
     remove(this._popupComponent);
     this._popupComponent = null;
     document.removeEventListener('keydown', this._escKeyDownHandler);
-    document.body.classList.remove(HIDE_OVERFLOW);
+    this._enableBodyOverflow();
     this._mode = Mode.DEFAULT;
+    this._scrollTop = START_SCROLL;
   }
 
   _handleAddToHistoryButtonClick() {
@@ -124,7 +141,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -135,7 +152,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -146,7 +163,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -163,6 +180,10 @@ export default class Movie {
       UpdateType.PATCH,
       Object.assign({}, this._film, {comments}),
     );
+  }
+
+  _handleScrollPopup(scrollTop) {
+    this._scrollTop = scrollTop;
   }
 
   _handleCommentSubmit(newComment) {
@@ -188,6 +209,11 @@ export default class Movie {
     );
   }
 
+  _renderPopupComponent() {
+    render(document.body, this._popupComponent);
+    this._popupComponent.getElement().scrollTop = this._scrollTop;
+  }
+
   _renderPopupComments(comments) {
     const filmDetailBottomContainer = this._popupComponent.getElement()
       .querySelector('.film-details__bottom-container');
@@ -197,9 +223,10 @@ export default class Movie {
     render(filmDetailBottomContainer, this._popupComments);
   }
 
-  _renderNewComment() {
-    const commentsContainer = this._popupComponent.getElement()
-      .querySelector('.film-details__comments-wrap');
+  _renderNewComment(formElement) {
+    this._newCommentComponent = new NewCommentView(formElement);
+    this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
+    const commentsContainer = formElement.querySelector('.film-details__comments-wrap');
     render(commentsContainer, this._newCommentComponent);
   }
 }

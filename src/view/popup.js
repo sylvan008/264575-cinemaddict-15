@@ -9,6 +9,7 @@ const CallbackTypes = {
   ADD_HISTORY: 'addToHistory',
   ADD_WATCHLIST: 'addToWatchlist',
   ADD_FAVORITE: 'addToFavorite',
+  SCROLL: 'scroll',
 };
 
 const filmDetailControlTypes = [
@@ -166,6 +167,7 @@ export default class Popup extends AbstractComponent {
     this._filmAddToFavoriteHandler = this._filmAddToFavoriteHandler.bind(this);
     this._filmAddToHistoryHandler = this._filmAddToHistoryHandler.bind(this);
     this._filmAddToWatchlistHandler = this._filmAddToWatchlistHandler.bind(this);
+    this._scrollTopHandler = this._scrollTopHandler.bind(this);
   }
 
   /**
@@ -199,6 +201,11 @@ export default class Popup extends AbstractComponent {
       .addEventListener('click', this._filmAddToWatchlistHandler);
   }
 
+  setScrollTopHandler(callback) {
+    this._callback[CallbackTypes.SCROLL] = callback;
+    this.getElement().addEventListener('scroll', this._scrollTopHandler);
+  }
+
   /**
    * @param {Event} evt
    * @private
@@ -221,5 +228,10 @@ export default class Popup extends AbstractComponent {
   _filmAddToFavoriteHandler(evt) {
     evt.preventDefault();
     this._callback[CallbackTypes.ADD_FAVORITE]();
+  }
+
+  _scrollTopHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.SCROLL](evt.target.scrollTop);
   }
 }

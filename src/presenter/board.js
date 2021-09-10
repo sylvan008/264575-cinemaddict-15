@@ -125,8 +125,7 @@ export class Board {
         this._updatePresenters(update);
         break;
       case UpdateType.MINOR:
-        this._clearBoard();
-        this._renderBoard();
+        this._updatePresenters(update);
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetRenderedCardCount: true, resetSort: true});
