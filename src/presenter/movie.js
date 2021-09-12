@@ -25,7 +25,10 @@ export default class Movie {
   constructor(cardListContainer, changeData, changeMode) {
     this._mode = Mode.DEFAULT;
     this._cardListContainer = cardListContainer;
-    this._changeData = changeData;
+    this._changeData = (...args) => {
+      this._saveScroll();
+      changeData(...args);
+    };
     this._changeMode = changeMode;
 
     this._filmCardComponent = null;
@@ -40,7 +43,6 @@ export default class Movie {
     this._handleAddToWatchlistButtonClick = this._handleAddToWatchlistButtonClick.bind(this);
     this._handleCommentSubmit = this._handleCommentSubmit.bind(this);
     this._handleCommentDelete = this._handleCommentDelete.bind(this);
-    this._handleScrollPopup = this._handleScrollPopup.bind(this);
   }
 
   init(film, comments, activeFilter) {
@@ -61,7 +63,7 @@ export default class Movie {
     }
 
     if (this._mode === Mode.OPEN) {
-      this._handleFilmCardClick();
+      this._renderPopupComponent();
     }
 
     remove(prevFilmCardComponent);
@@ -70,13 +72,18 @@ export default class Movie {
   destroy() {
     remove(this._filmCardComponent);
     if(this._popupComponent) {
-      remove(this._popupComponent);
+      this.resetView();
     }
   }
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._handlePopupCloseButtonClick();
+      remove(this._popupComponent);
+      this._popupComponent = null;
+      document.removeEventListener('keydown', this._escKeyDownHandler);
+      this._enableBodyOverflow();
+      this._mode = Mode.DEFAULT;
+      this._scrollTop = START_SCROLL;
     }
   }
 
@@ -96,7 +103,6 @@ export default class Movie {
     this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
     this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
     this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
-    this._popupComponent.setScrollTopHandler(this._handleScrollPopup);
 
     this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
   }
@@ -113,7 +119,7 @@ export default class Movie {
     if (!isEscapeKey(evt)) {
       return;
     }
-    this._handlePopupCloseButtonClick();
+    this.resetView();
   }
 
   _getFilmComments() {
@@ -122,20 +128,12 @@ export default class Movie {
 
   _handleFilmCardClick() {
     this._changeMode();
-    this._createFilmPopupComponent(this._film);
     this._renderPopupComponent();
-    document.addEventListener('keydown', this._escKeyDownHandler);
-    this._disableBodyOverflow();
     this._mode = Mode.OPEN;
   }
 
   _handlePopupCloseButtonClick() {
-    remove(this._popupComponent);
-    this._popupComponent = null;
-    document.removeEventListener('keydown', this._escKeyDownHandler);
-    this._enableBodyOverflow();
-    this._mode = Mode.DEFAULT;
-    this._scrollTop = START_SCROLL;
+    this.resetView();
   }
 
   _handleAddToHistoryButtonClick() {
@@ -185,10 +183,6 @@ export default class Movie {
     );
   }
 
-  _handleScrollPopup(scrollTop) {
-    this._scrollTop = scrollTop;
-  }
-
   _handleCommentSubmit(newComment) {
     const comment = Object.assign({}, newComment, {
       id: getId(),
@@ -213,8 +207,19 @@ export default class Movie {
   }
 
   _renderPopupComponent() {
-    render(document.body, this._popupComponent);
+    const prevElement = this._popupComponent;
+    this._createFilmPopupComponent(this._film);
+
+    if (prevElement !== null) {
+      replace(this._popupComponent, prevElement);
+      remove(prevElement);
+    } else {
+      render(document.body, this._popupComponent);
+    }
+
     this._popupComponent.getElement().scrollTop = this._scrollTop;
+    document.addEventListener('keydown', this._escKeyDownHandler);
+    this._disableBodyOverflow();
   }
 
   _renderPopupComments(comments) {
@@ -235,5 +240,11 @@ export default class Movie {
 
   _setCurrentTypeUpdate(filterType) {
     return this._activeFilter === filterType ? UpdateType.MINOR : UpdateType.PATCH;
+  }
+
+  _saveScroll() {
+    if (this._mode === Mode.OPEN && this._popupComponent) {
+      this._scrollTop = this._popupComponent.getElement().scrollTop;
+    }
   }
 }
