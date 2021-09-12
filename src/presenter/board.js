@@ -219,15 +219,15 @@ export class Board {
     this._renderTopFilmList();
   }
 
-  _renderCard(presenterCollection, container, film) {
+  _renderCard(presenterCollection, container, film, currentFilter) {
     const MoviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
-    MoviePresenter.init(film, this._getComments());
+    MoviePresenter.init(film, this._getComments(), currentFilter);
     presenterCollection.set(film.filmInfo.id, MoviePresenter);
   }
 
   _renderCards(presenterCollection, listComponent, filmsList) {
     const container = listComponent.getElement().querySelector('.films-list__container');
-    filmsList.forEach((film) => this._renderCard(presenterCollection, container, film));
+    filmsList.forEach((film) => this._renderCard(presenterCollection, container, film, this._filterType));
   }
 
   _renderFilmsBoard() {

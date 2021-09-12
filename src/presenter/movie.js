@@ -4,7 +4,7 @@ import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
 import {remove, render, replace} from '../utils/render.js';
 import {getId, isEscapeKey} from '../utils/common.js';
-import {UpdateType, UserAction} from '../utils/const.js';
+import {FilterTypes, UpdateType, UserAction} from '../utils/const.js';
 import {getDateNow} from '../utils/date.js';
 
 const START_SCROLL = 0;
@@ -43,11 +43,11 @@ export default class Movie {
     this._handleScrollPopup = this._handleScrollPopup.bind(this);
   }
 
-  init(film, comments) {
+  init(film, comments, activeFilter) {
     const prevFilmCardComponent = this._filmCardComponent;
-
     this._film = film;
     this._comments = comments;
+    this._activeFilter = activeFilter;
 
     this._createFilmCardComponent(this._film);
 
@@ -69,7 +69,9 @@ export default class Movie {
 
   destroy() {
     remove(this._filmCardComponent);
-    remove(this._popupComponent);
+    if(this._popupComponent) {
+      remove(this._popupComponent);
+    }
   }
 
   resetView() {
@@ -142,7 +144,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      this._setCurrentTypeUpdate(FilterTypes.HISTORY),
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -153,7 +155,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      this._setCurrentTypeUpdate(FilterTypes.WATCHLIST),
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -164,7 +166,7 @@ export default class Movie {
 
     this._changeData(
       UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      this._setCurrentTypeUpdate(FilterTypes.FAVORITES),
       Object.assign({}, this._film, {userDetails}),
     );
   }
@@ -229,5 +231,9 @@ export default class Movie {
     this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
     const commentsContainer = formElement.querySelector('.film-details__comments-wrap');
     render(commentsContainer, this._newCommentComponent);
+  }
+
+  _setCurrentTypeUpdate(filterType) {
+    return this._activeFilter === filterType ? UpdateType.MINOR : UpdateType.PATCH;
   }
 }
