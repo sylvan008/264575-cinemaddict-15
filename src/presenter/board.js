@@ -117,15 +117,13 @@ export class Board {
   }
 
   _handleModelEvent(updateType, update) {
-    // В зависимости от типа изменений, выбираем что делать
-    // - обновить всю доску
-    // - обновить список
     switch (updateType) {
       case UpdateType.PATCH:
         this._updatePresenters(update);
         break;
       case UpdateType.MINOR:
-        this._updatePresenters(update);
+        this._clearBoard();
+        this._renderBoard();
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetRenderedCardCount: true, resetSort: true});
@@ -160,10 +158,7 @@ export class Board {
     }
     this._currentSortType = sortType;
     this._clearBoard();
-    this._renderAllFilmList();
-    this._renderCommentedFilmList();
-    this._renderTopFilmList();
-    this._renderSortMenu();
+    this._renderBoard();
   }
 
   _renderAllFilmList() {
@@ -174,7 +169,7 @@ export class Board {
     this._renderCards(
       this._presenters[PresenterListTypes.COMMON],
       this._allFilmListComponent,
-      films.slice(0, this._renderedCardCount),
+      films.slice(0, Math.min(filmCount, this._renderedCardCount)),
     );
     if (filmCount > this._renderedCardCount) {
       this._renderShowMoreButton();
@@ -184,28 +179,30 @@ export class Board {
   _renderCommentedFilmList() {
     this._commentedFilmListComponent = new FilmListView(FilmListTypes.COMMENTED_MOVIES);
     const sortedFilms = this._getFilms(SortTypes.COMMENTS);
-    if (!sortedFilms.length) {
+    const filmsCount = sortedFilms.length;
+    if (!filmsCount) {
       return;
     }
     render(this._filmsBoardComponent, this._commentedFilmListComponent);
     this._renderCards(
       this._presenters[PresenterListTypes.COMMENTED],
       this._commentedFilmListComponent,
-      sortedFilms.slice(0, CARDS_EXTRA_LOAD_STEP),
+      sortedFilms.slice(0, Math.min(filmsCount, CARDS_EXTRA_LOAD_STEP)),
     );
   }
 
   _renderTopFilmList() {
     this._topFilmListComponent = new FilmListView(FilmListTypes.TOP_MOVIES);
     const sortedFilms = this._getFilms(SortTypes.RATING);
-    if (!sortedFilms.length) {
+    const filmsCount = sortedFilms.length;
+    if (!filmsCount) {
       return;
     }
     render(this._filmsBoardComponent, this._topFilmListComponent);
     this._renderCards(
       this._presenters[PresenterListTypes.RATING],
       this._topFilmListComponent,
-      sortedFilms.slice(0, CARDS_EXTRA_LOAD_STEP),
+      sortedFilms.slice(0, Math.min(filmsCount, CARDS_EXTRA_LOAD_STEP)),
     );
   }
 
