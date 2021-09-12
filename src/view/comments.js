@@ -1,5 +1,6 @@
 import AbstractComponent from '../abstract-component.js';
 import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils/date.js';
+import {encodeUnsafeSymbols} from '../utils/common.js';
 
 const COMMENT_TODAY = 'Today';
 const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';
@@ -27,7 +28,7 @@ const createCommentItem = ({author, comment, date, emotion, id}) => {
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comment}</p>
+        <p class="film-details__comment-text">${encodeUnsafeSymbols(comment)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>

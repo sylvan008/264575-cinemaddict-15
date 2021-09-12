@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid';
+import he from 'he';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -12,9 +13,12 @@ const isEscapeKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 const getId = () => nanoid();
 
+const encodeUnsafeSymbols = (str) => he.encode(str);
+
 export {
   getRandomInteger,
   getRandomArrayElement,
   isEscapeKey,
-  getId
+  getId,
+  encodeUnsafeSymbols
 };

@@ -87,7 +87,7 @@ export default class NewComment extends SmartComponent {
   _commentInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      comment: evt.target.value.trim(),
+      comment:evt.target.value.trim(),
     },true);
   }
 
