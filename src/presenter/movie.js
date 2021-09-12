@@ -69,6 +69,7 @@ export default class Movie {
 
   destroy() {
     remove(this._filmCardComponent);
+    remove(this._popupComponent);
   }
 
   resetView() {
