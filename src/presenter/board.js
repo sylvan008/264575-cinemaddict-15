@@ -141,9 +141,7 @@ export class Board {
     this._renderCards(
       this._presenters[PresenterListTypes.COMMON],
       this._allFilmListComponent,
-      films,
-      this._renderedCardCount,
-      nextCards,
+      films.slice(this._renderedCardCount, nextCards),
     );
     this._renderedCardCount = nextCards;
     if (this._renderedCardCount >= filmCount) {
@@ -162,13 +160,13 @@ export class Board {
     }
     this._currentSortType = sortType;
     this._clearBoard();
-    this._renderAllFilmList(0, this._renderedCardCount);
-    this._renderCommentedFilmList(0, CARDS_EXTRA_LOAD_STEP);
-    this._renderTopFilmList(0, CARDS_EXTRA_LOAD_STEP);
+    this._renderAllFilmList();
+    this._renderCommentedFilmList();
+    this._renderTopFilmList();
     this._renderSortMenu();
   }
 
-  _renderAllFilmList(from, to) {
+  _renderAllFilmList() {
     this._allFilmListComponent = new FilmListView(FilmListTypes.ALL_MOVIES);
     const films = this._getFilms(this._currentSortType);
     const filmCount = films.length;
@@ -176,16 +174,14 @@ export class Board {
     this._renderCards(
       this._presenters[PresenterListTypes.COMMON],
       this._allFilmListComponent,
-      films,
-      from,
-      to,
+      films.slice(0, this._renderedCardCount),
     );
     if (filmCount > this._renderedCardCount) {
       this._renderShowMoreButton();
     }
   }
 
-  _renderCommentedFilmList(from, to) {
+  _renderCommentedFilmList() {
     this._commentedFilmListComponent = new FilmListView(FilmListTypes.COMMENTED_MOVIES);
     const sortedFilms = this._getFilms(SortTypes.COMMENTS);
     if (!sortedFilms.length) {
@@ -195,13 +191,11 @@ export class Board {
     this._renderCards(
       this._presenters[PresenterListTypes.COMMENTED],
       this._commentedFilmListComponent,
-      sortedFilms,
-      from,
-      to,
+      sortedFilms.slice(0, CARDS_EXTRA_LOAD_STEP),
     );
   }
 
-  _renderTopFilmList(from, to) {
+  _renderTopFilmList() {
     this._topFilmListComponent = new FilmListView(FilmListTypes.TOP_MOVIES);
     const sortedFilms = this._getFilms(SortTypes.RATING);
     if (!sortedFilms.length) {
@@ -211,9 +205,7 @@ export class Board {
     this._renderCards(
       this._presenters[PresenterListTypes.RATING],
       this._topFilmListComponent,
-      sortedFilms,
-      from,
-      to,
+      sortedFilms.slice(0, CARDS_EXTRA_LOAD_STEP),
     );
   }
 
@@ -225,9 +217,9 @@ export class Board {
     }
 
     this._renderSortMenu();
-    this._renderAllFilmList(0, this._renderedCardCount);
-    this._renderCommentedFilmList(0, CARDS_EXTRA_LOAD_STEP);
-    this._renderTopFilmList(0, CARDS_EXTRA_LOAD_STEP);
+    this._renderAllFilmList();
+    this._renderCommentedFilmList();
+    this._renderTopFilmList();
   }
 
   _renderCard(presenterCollection, container, film) {
@@ -236,12 +228,9 @@ export class Board {
     presenterCollection.set(film.filmInfo.id, MoviePresenter);
   }
 
-  _renderCards(presenterCollection, listComponent, filmsList, from, to) {
+  _renderCards(presenterCollection, listComponent, filmsList) {
     const container = listComponent.getElement().querySelector('.films-list__container');
-    filmsList.slice(from, to)
-      .forEach((film) => {
-        this._renderCard(presenterCollection, container, film);
-      });
+    filmsList.forEach((film) => this._renderCard(presenterCollection, container, film));
   }
 
   _renderFilmsBoard() {
