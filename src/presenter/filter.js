@@ -4,10 +4,11 @@ import {filter} from '../utils/filter.js';
 import {FilterTypes} from '../utils/const.js';
 
 export default class Filter {
-  constructor(filterContainer, filtersModel, filmsModel) {
+  constructor(filterContainer, filtersModel, filmsModel, menuClickHandler) {
     this._filterContainer = filterContainer;
     this._filtersModel = filtersModel;
     this._filmsModel = filmsModel;
+    this._menuClickHandler = menuClickHandler;
 
     this._filtersComponent = null;
 
@@ -24,6 +25,7 @@ export default class Filter {
 
     this._filtersComponent = new MainNavigation(this._filtersModel.activeFilter, filters);
     this._filtersComponent.setFilterChangeHandler(this._handleViewAction);
+    this._filtersComponent.setMenuClickHandler(this._menuClickHandler);
 
     if (!prevFilterComponent) {
       render(this._filterContainer, this._filtersComponent, RenderPosition.AFTERBEGIN);

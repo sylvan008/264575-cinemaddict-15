@@ -19,6 +19,7 @@ const PresenterListTypes = {
 
 export class Board {
   constructor(boardContainer, filmsModel, commentsModel, filtersModel) {
+    this._isInit = false;
     this._boardContainer = boardContainer;
     this._headerElement = boardContainer.querySelector('.header');
     this._mainElement = boardContainer.querySelector('.main');
@@ -42,22 +43,40 @@ export class Board {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
-
     this._userProfileComponent = null;
     this._sortMenuComponent = null;
     this._showMoreButtonComponent = null;
     this._allFilmListComponen = null;
     this._commentedFilmListComponent = null;
     this._topFilmListComponent = null;
+  }
 
-    this._filmsBoardComponent = new FilmsBoard();
+  get isInit() {
+    return this._isInit;
+  }
+
+  set isInit(initial) {
+    this._isInit = initial;
   }
 
   init() {
+    this.isInit = true;
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
+
+    this._filmsBoardComponent = new FilmsBoard();
     this._renderBoard();
+  }
+
+  destroy() {
+    this._filmsModel.removeObserver(this._handleModelEvent);
+    this._commentsModel.removeObserver(this._handleModelEvent);
+    this._filtersModel.removeObserver(this._handleModelEvent);
+
+    this._clearBoard();
+    remove(this._filmsBoardComponent);
+    this.isInit = false;
   }
 
   _getFilms(sortType = SortTypes.DEFAULT) {

@@ -1,17 +1,18 @@
 import AbstractComponent from '../abstract-component.js';
-import {UpdateType} from '../utils/const.js';
+import {MenuTypes, UpdateType} from '../utils/const.js';
 
 const NAVIGATION_ACTIVE_CLASS = 'main-navigation__item--active';
 
 const CallbackTypes = {
   CHANGE_FILTER: 'CHANGE_FILTER',
+  SWITCH_PAGE: 'SWITCH_PAGE',
 };
 
 const createNavigationItem = (navItem, activeFilter) => {
   const {type, text, count = null} = navItem;
   const activeClass = activeFilter === type ? NAVIGATION_ACTIVE_CLASS : '';
 
-  return `<a href="#${type}" class="main-navigation__item ${activeClass}" data-filter="${type}">
+  return `<a href="#${type}" class="main-navigation__item ${activeClass}" data-filter="${type}" data-menu-type="${MenuTypes.BOARD}">
       ${text}
       ${count ? `<span class="main-navigation__item-count">${count}</span>` : ''}
     </a>
@@ -27,7 +28,7 @@ const createNavigationTemplate = (activeFilter, filters) =>
     <div class="main-navigation__items">
       ${filters.map((filter) => createNavigationItem(filter, activeFilter)).join('')}
     </div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
+    <a href="#stats" class="main-navigation__additional" data-menu-type="${MenuTypes.STATISTICS}">Stats</a>
   </nav>`;
 
 export default class MainNavigation extends AbstractComponent {
@@ -40,6 +41,7 @@ export default class MainNavigation extends AbstractComponent {
     this._activeFilter = activeFilter;
 
     this._filterChangeHandler = this._filterChangeHandler.bind(this);
+    this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 
   /**
@@ -56,10 +58,23 @@ export default class MainNavigation extends AbstractComponent {
       .addEventListener('click', this._filterChangeHandler);
   }
 
+  setMenuClickHandler(callback) {
+    this._callback[CallbackTypes.SWITCH_PAGE] = callback;
+    this.getElement()
+      .addEventListener('click', this._menuClickHandler);
+  }
+
   _filterChangeHandler(evt) {
     if (evt.target.closest('.main-navigation__item')) {
       evt.preventDefault();
       this._callback[CallbackTypes.CHANGE_FILTER](UpdateType.MAJOR, evt.target.dataset.filter);
+    }
+  }
+
+  _menuClickHandler(evt) {
+    if (evt.target.closest('.main-navigation__item') || evt.target.closest('.main-navigation__additional')) {
+      evt.preventDefault();
+      this._callback[CallbackTypes.SWITCH_PAGE](evt.target.dataset.menuType);
     }
   }
 }

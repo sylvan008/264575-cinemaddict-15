@@ -43,11 +43,17 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+const MenuTypes = {
+  BOARD: 'BOARD',
+  STATISTICS: 'STATISTICS',
+};
+
 export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
   FilterTypes,
   UserAction,
-  UpdateType
+  UpdateType,
+  MenuTypes
 };
