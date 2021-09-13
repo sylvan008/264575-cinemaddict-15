@@ -36,8 +36,9 @@ const createNewCommentTemplate = ({emotion, comment, isEmotion}) =>
 `;
 
 export default class NewComment extends SmartComponent {
-  constructor() {
+  constructor(formElement) {
     super();
+    this._formElement = formElement;
     this._data = NewComment.parseFormToData({
       emotion: null,
       comment: '',
@@ -45,6 +46,7 @@ export default class NewComment extends SmartComponent {
 
     this._emotionChangeHandler = this._emotionChangeHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
+    this._submitFormHandler = this._submitFormHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -69,8 +71,7 @@ export default class NewComment extends SmartComponent {
 
   setFormSubmitHandler(callback) {
     this._callback[CallbackTypes.SUBMIT] = callback;
-    document.querySelector('.film-details__inner')
-      .addEventListener(CallbackTypes.SUBMIT, this._submitFormHandler);
+    this._formElement.addEventListener(CallbackTypes.SUBMIT, this._submitFormHandler);
   }
 
   _emotionChangeHandler(evt) {
@@ -86,7 +87,7 @@ export default class NewComment extends SmartComponent {
   _commentInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      comment: evt.target.value.trim(),
+      comment:evt.target.value.trim(),
     },true);
   }
 
@@ -102,26 +103,29 @@ export default class NewComment extends SmartComponent {
     this.getElement()
       .querySelector('.film-details__comment-input')
       .addEventListener('input', this._commentInputHandler);
-    this._setSubmitShortKeys();
+    this.getElement().querySelector('.film-details__comment-input').addEventListener(
+      'keydown', (evt) => {
+        if (evt.key === Keys.ENTER && (evt.ctrlKey || evt.metaKey)) {
+          this._submitFormHandler();
+        }
+      },
+    );
   }
 
-  _setSubmitShortKeys() {
-    const pressed = new Set();
-    const textarea = this.getElement().querySelector('.film-details__comment-input');
-
-    textarea.addEventListener('keydown', (evt) => {
-      pressed.add(evt.key);
-      if (pressed.has(Keys.ENTER) && (pressed.has(Keys.META) || pressed.has(Keys.CTRL))) {
-        this._submitFormHandler();
-      }
-    });
-
-    textarea.addEventListener('keyup', (evt) => {
-      pressed.delete(evt.key);
-    });
+  _validateForm() {
+    if (this._data.emotion === null) {
+      return false;
+    }
+    if (this._data.comment.trim() === '') {
+      return false;
+    }
+    return true;
   }
 
   _submitFormHandler() {
-    this._callback[CallbackTypes.SUBMIT](NewComment.parseFormToData(this._data));
+    if (!this._validateForm()) {
+      return;
+    }
+    this._callback[CallbackTypes.SUBMIT](NewComment.parseDataToForm(this._data));
   }
 }

@@ -9,6 +9,7 @@ const CallbackTypes = {
   ADD_HISTORY: 'addToHistory',
   ADD_WATCHLIST: 'addToWatchlist',
   ADD_FAVORITE: 'addToFavorite',
+  SCROLL: 'scroll',
 };
 
 const filmDetailControlTypes = [

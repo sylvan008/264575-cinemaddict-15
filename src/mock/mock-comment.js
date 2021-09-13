@@ -14,7 +14,7 @@ const createIdGenerator = (numberId = 100) => {
     if (idList.length === 0) {
       return;
     }
-    return idList.shift();
+    return idList.shift().toString();
   };
 };
 

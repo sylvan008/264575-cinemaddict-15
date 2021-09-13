@@ -1,8 +1,12 @@
 import AbstractComponent from '../abstract-component.js';
 import {getDateDifferenceFromNow, getHumanizeDate, getRelativeDate} from '../utils/date.js';
+import {encodeUnsafeSymbols} from '../utils/common.js';
 
 const COMMENT_TODAY = 'Today';
 const COMMENT_DATE_TEMPLATE = 'YYYY/MM/DD hh:mm';
+const CallbackTypes = {
+  DELETE_COMMENT: 'DELETE_COMMENT',
+};
 
 const getCommentDate = (date, dayDifference) => {
   switch(dayDifference) {
@@ -16,7 +20,7 @@ const getCommentDate = (date, dayDifference) => {
   }
 };
 
-const createCommentItem = ({author, comment, date, emotion}) => {
+const createCommentItem = ({author, comment, date, emotion, id}) => {
   const commentDate = getCommentDate(date, getDateDifferenceFromNow(date));
   return `
     <li class="film-details__comment">
@@ -24,11 +28,11 @@ const createCommentItem = ({author, comment, date, emotion}) => {
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comment}</p>
+        <p class="film-details__comment-text">${encodeUnsafeSymbols(comment)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
         </p>
       </div>
     </li>
@@ -60,6 +64,8 @@ export default class Comments extends AbstractComponent {
      * @private
      */
     this._comments = comments;
+
+    this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
   }
 
   /**
@@ -67,5 +73,17 @@ export default class Comments extends AbstractComponent {
    */
   getTemplate() {
     return createCommentsTemplate(this._comments);
+  }
+
+  _commentDeleteHandler(evt) {
+    evt.preventDefault();
+    this._callback[CallbackTypes.DELETE_COMMENT](evt.target.dataset.commentId);
+  }
+
+  setCommentDeleteHandler(callback) {
+    this._callback[CallbackTypes.DELETE_COMMENT] = callback;
+    this.getElement()
+      .querySelector('.film-details__comments-list')
+      .addEventListener('click', this._commentDeleteHandler);
   }
 }

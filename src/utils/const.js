@@ -24,16 +24,30 @@ const FilmControlTypes = {
   FAVORITE: 'favorite',
 };
 
-const NavigationTypes = {
+const FilterTypes = {
   ALL: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',
 };
 
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
-  NavigationTypes
+  FilterTypes,
+  UserAction,
+  UpdateType
 };
