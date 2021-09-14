@@ -74,7 +74,10 @@ export class Board {
     this._commentsModel.removeObserver(this._handleModelEvent);
     this._filtersModel.removeObserver(this._handleModelEvent);
 
-    this._clearBoard();
+    this._clearBoard({
+      resetRenderedCardCount: true,
+      resetSort: true,
+    });
     remove(this._filmsBoardComponent);
     this.isInit = false;
   }
