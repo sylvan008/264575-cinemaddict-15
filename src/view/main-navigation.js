@@ -8,9 +8,9 @@ const CallbackTypes = {
   SWITCH_PAGE: 'SWITCH_PAGE',
 };
 
-const createNavigationItem = (navItem, activeFilter) => {
+const createNavigationItem = (navItem, activeFilter, menuType) => {
   const {type, text, count = null} = navItem;
-  const activeClass = activeFilter === type ? NAVIGATION_ACTIVE_CLASS : '';
+  const activeClass = (menuType === MenuTypes.BOARD && activeFilter === type) ? NAVIGATION_ACTIVE_CLASS : '';
 
   return `<a href="#${type}" class="main-navigation__item ${activeClass}" data-filter="${type}" data-menu-type="${MenuTypes.BOARD}">
       ${text}
@@ -23,22 +23,28 @@ const createNavigationItem = (navItem, activeFilter) => {
  * @param {{name: number}} statistics
  * @return {string} HTML template
  */
-const createNavigationTemplate = (activeFilter, filters) =>
+const createNavigationTemplate = (activeFilter, filters, menuType) =>
   `<nav class="main-navigation">
     <div class="main-navigation__items">
-      ${filters.map((filter) => createNavigationItem(filter, activeFilter)).join('')}
+      ${filters.map((filter) => createNavigationItem(filter, activeFilter, menuType)).join('')}
     </div>
-    <a href="#stats" class="main-navigation__additional" data-menu-type="${MenuTypes.STATISTICS}">Stats</a>
+    <a href="#stats"
+        class="main-navigation__additional ${menuType === MenuTypes.STATISTICS ? NAVIGATION_ACTIVE_CLASS : ''}"
+        data-menu-type="${MenuTypes.STATISTICS}"
+    >
+      Stats
+    </a>
   </nav>`;
 
 export default class MainNavigation extends AbstractComponent {
   /**
    * @param {{name: number}} statistics
    */
-  constructor(activeFilter, filters) {
+  constructor(activeFilter, filters, menuType) {
     super();
     this._filters = filters;
     this._activeFilter = activeFilter;
+    this._menuType = menuType;
 
     this._filterChangeHandler = this._filterChangeHandler.bind(this);
     this._menuClickHandler = this._menuClickHandler.bind(this);
@@ -48,7 +54,7 @@ export default class MainNavigation extends AbstractComponent {
    * @return {string}
    */
   getTemplate() {
-    return createNavigationTemplate(this._activeFilter, this._filters);
+    return createNavigationTemplate(this._activeFilter, this._filters, this._menuType);
   }
 
   setFilterChangeHandler(callback) {
