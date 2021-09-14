@@ -242,9 +242,9 @@ export class Board {
   }
 
   _renderCard(presenterCollection, container, film, currentFilter) {
-    const MoviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
-    MoviePresenter.init(film, this._getComments(), currentFilter);
-    presenterCollection.set(film.filmInfo.id, MoviePresenter);
+    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
+    moviePresenter.init(film, this._getComments(), currentFilter);
+    presenterCollection.set(film.filmInfo.id, moviePresenter);
   }
 
   _renderCards(presenterCollection, listComponent, filmsList) {
@@ -287,7 +287,7 @@ export class Board {
     Object.values(this._presenters).forEach((collection) => {
       const film = collection.get(data.filmInfo.id);
       if (film) {
-        film.init(data, this._getComments());
+        film.init(data, this._getComments(), this._filterType);
       }
     });
   }
