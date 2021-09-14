@@ -77,7 +77,7 @@ const generateAgeRating = () => {
 const generateUserDetails = () => {
   const watchlist = Boolean(getRandomInteger());
   const alreadyWatched = Boolean(getRandomInteger());
-  const watchingDate = alreadyWatched ? generateDate([1990, dayjs().year()]) : null;
+  const watchingDate = alreadyWatched ? generateDate([2020, dayjs().year()]) : null;
   const favorite = Boolean(getRandomInteger());
   return {
     watchlist,

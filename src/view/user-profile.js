@@ -1,17 +1,6 @@
 import AbstractComponent from '../abstract-component.js';
+import {getUserRank} from '../utils/common.js';
 
-const EDGE_NOVICE = 10;
-const EDGE_FAN = 20;
-
-const getUserRank = (watchedFilmsCount) => {
-  if (watchedFilmsCount <= EDGE_NOVICE) {
-    return 'Novice';
-  }
-  if (watchedFilmsCount <= EDGE_FAN) {
-    return 'Fan';
-  }
-  return 'Movie Buff';
-};
 
 const createUserProfileTemplate = (count) =>
   `<section class="header__profile profile">

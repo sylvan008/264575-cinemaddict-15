@@ -48,6 +48,14 @@ const MenuTypes = {
   STATISTICS: 'STATISTICS',
 };
 
+const StatisticFiltersTypes = {
+  ALL_TIME: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
 export {
   FilmListTypes,
   emotions,
@@ -55,5 +63,6 @@ export {
   FilterTypes,
   UserAction,
   UpdateType,
-  MenuTypes
+  MenuTypes,
+  StatisticFiltersTypes
 };

@@ -18,11 +18,14 @@ const getDatesDifference = (dateA, dateB) => dayjs(dateA).diff(dayjs(dateB));
 
 const getDateNow = () => dayjs();
 
+const getDateIsAfter = (date, period) => getDateNow().subtract(1, period).isBefore(date);
+
 export {
   getRelativeDate,
   getHumanizeDate,
   getHumanizeFilmDuration,
   getDateDifferenceFromNow,
   getDatesDifference,
-  getDateNow
+  getDateNow,
+  getDateIsAfter
 };
