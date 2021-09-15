@@ -4,6 +4,7 @@ import FilmListView from '../view/film-list.js';
 import NoFilmView from '../view/no-film.js';
 import ShowMoreButtonView from '../view/show-more.js';
 import SortMenu from '../view/sort-menu.js';
+import LoadingView from '../view/loading.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {FilmListTypes, UpdateType, UserAction} from '../utils/const.js';
 import {sortFilmByComments, sortFilmByDate, sortFilmByRating, SortTypes} from '../utils/sort.js';
@@ -20,6 +21,7 @@ const PresenterListTypes = {
 export class Board {
   constructor(boardContainer, filmsModel, commentsModel, filtersModel) {
     this._isInit = false;
+    this._isLoading = true;
     this._boardContainer = boardContainer;
     this._headerElement = boardContainer.querySelector('.header');
     this._mainElement = boardContainer.querySelector('.main');
@@ -49,6 +51,7 @@ export class Board {
     this._allFilmListComponen = null;
     this._commentedFilmListComponent = null;
     this._topFilmListComponent = null;
+    this._loadingComponent = new LoadingView();
   }
 
   get isInit() {
@@ -66,6 +69,7 @@ export class Board {
     this._filtersModel.addObserver(this._handleModelEvent);
 
     this._filmsBoardComponent = new FilmsBoard();
+    this._renderFilmsBoard();
     this._renderBoard();
   }
 
@@ -151,6 +155,11 @@ export class Board {
         this._clearBoard({resetRenderedCardCount: true, resetSort: true});
         this._renderBoard();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
     }
   }
 
@@ -229,9 +238,8 @@ export class Board {
   }
 
   _renderBoard() {
-    this._renderFilmsBoard();
-    if (!this._getFilms().length) {
-      this._renderNoFilms();
+    if (this._isLoading) {
+      this._renderLoading();
       return;
     }
 
@@ -254,6 +262,10 @@ export class Board {
 
   _renderFilmsBoard() {
     render(this._mainElement, this._filmsBoardComponent);
+  }
+
+  _renderLoading() {
+    render(this._filmsBoardComponent, this._loadingComponent);
   }
 
   _renderNoFilms() {
