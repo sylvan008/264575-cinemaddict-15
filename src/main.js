@@ -4,10 +4,8 @@ import {Board} from './presenter/board.js';
 import Filter from './presenter/filter.js';
 import FooterStatisticsView from './view/footer-statistics.js';
 import StatisticView from './view/statistic.js';
-import {MenuTypes} from './utils/const.js';
+import {MenuTypes, UpdateType} from './utils/const.js';
 import {remove, render} from './utils/render.js';
-import {generateComment} from './mock/mock-comment.js';
-import {generateFilm} from './mock/mock-film.js';
 import CommentsModel from './model/comments.js';
 import Api from './api.js';
 
@@ -19,18 +17,10 @@ const footerStatisticsElement = document.querySelector('.footer__statistics');
 const mainElement = pageElement.querySelector('.main');
 
 const api = new Api(END_POINT, AUTHORIZATION);
-api.getFilms().then((data) => {
-  console.log(data);
-});
-const commentsData = new Array(100).fill('').map(generateComment);
-const filmsData = new Array(23).fill('').map(generateFilm);
 
 const filtersModel = new FiltersModel();
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
-
-filmsModel.films = filmsData;
-commentsModel.comments = commentsData;
 
 const boardPresenter = new Board(pageElement, filmsModel, commentsModel, filtersModel);
 boardPresenter.init();
@@ -58,4 +48,11 @@ const handleSiteMenuClick = (menuType) => {
 const filtersPresenter = new Filter(mainElement, filtersModel, filmsModel, handleSiteMenuClick);
 filtersPresenter.init();
 
-render(footerStatisticsElement, new FooterStatisticsView(filmsData.length));
+api.getFilms()
+  .then((data) => {
+    filmsModel.setFilms(UpdateType.INIT, data);
+    render(footerStatisticsElement, new FooterStatisticsView(filmsModel.films.length));
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });
