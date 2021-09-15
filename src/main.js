@@ -9,11 +9,19 @@ import {remove, render} from './utils/render.js';
 import {generateComment} from './mock/mock-comment.js';
 import {generateFilm} from './mock/mock-film.js';
 import CommentsModel from './model/comments.js';
+import Api from './api.js';
+
+const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
+const AUTHORIZATION = 'Basic gjoo9fvs4njdfsii49hck439!';
 
 const pageElement = document.querySelector('body');
 const footerStatisticsElement = document.querySelector('.footer__statistics');
 const mainElement = pageElement.querySelector('.main');
 
+const api = new Api(END_POINT, AUTHORIZATION);
+api.getFilms().then((data) => {
+  console.log(data);
+});
 const commentsData = new Array(100).fill('').map(generateComment);
 const filmsData = new Array(23).fill('').map(generateFilm);
 
