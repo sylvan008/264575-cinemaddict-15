@@ -71,16 +71,19 @@ export default class MainNavigation extends AbstractComponent {
   }
 
   _filterChangeHandler(evt) {
-    if (evt.target.closest('.main-navigation__item')) {
+    const navigationElement = evt.target.closest('.main-navigation__item');
+    if (navigationElement) {
       evt.preventDefault();
-      this._callback[CallbackTypes.CHANGE_FILTER](UpdateType.MAJOR, evt.target.dataset.filter);
+      this._callback[CallbackTypes.CHANGE_FILTER](UpdateType.MAJOR, navigationElement.dataset.filter);
     }
   }
 
   _menuClickHandler(evt) {
-    if (evt.target.closest('.main-navigation__item') || evt.target.closest('.main-navigation__additional')) {
+    const navigationElement = evt.target.closest('.main-navigation__item')
+      || evt.target.closest('.main-navigation__additional');
+    if (navigationElement) {
       evt.preventDefault();
-      this._callback[CallbackTypes.SWITCH_PAGE](evt.target.dataset.menuType);
+      this._callback[CallbackTypes.SWITCH_PAGE](navigationElement.dataset.menuType);
     }
   }
 }
