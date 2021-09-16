@@ -2,6 +2,7 @@ import AbstractComponent from '../abstract-component.js';
 import {MenuTypes, UpdateType} from '../utils/const.js';
 
 const NAVIGATION_ACTIVE_CLASS = 'main-navigation__item--active';
+const NAVIGATION_ADDITIONAL_ACTIVE_CLASS = 'main-navigation__additional--active';
 
 const CallbackTypes = {
   CHANGE_FILTER: 'CHANGE_FILTER',
@@ -29,7 +30,7 @@ const createNavigationTemplate = (activeFilter, filters, menuType) =>
       ${filters.map((filter) => createNavigationItem(filter, activeFilter, menuType)).join('')}
     </div>
     <a href="#stats"
-        class="main-navigation__additional ${menuType === MenuTypes.STATISTICS ? NAVIGATION_ACTIVE_CLASS : ''}"
+        class="main-navigation__additional ${menuType === MenuTypes.STATISTICS ? NAVIGATION_ADDITIONAL_ACTIVE_CLASS : ''}"
         data-menu-type="${MenuTypes.STATISTICS}"
     >
       Stats
