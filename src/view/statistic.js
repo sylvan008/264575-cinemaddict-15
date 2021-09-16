@@ -175,6 +175,13 @@ export default class Statistic extends SmartComponent {
     );
   }
 
+  removeElement() {
+    super.removeElement();
+    if (this._filmChart !== null) {
+      this._filmChart = null;
+    }
+  }
+
   restoreHandlers() {
     this._setInnerHandlers();
   }
