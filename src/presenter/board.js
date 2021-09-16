@@ -301,7 +301,7 @@ export class Board {
     Object.values(this._presenters).forEach((collection) => {
       const film = collection.get(data.filmInfo.id);
       if (film) {
-        film.init(data, this._getComments(), this._filterType);
+        film.init(data, this._filterType);
       }
     });
   }

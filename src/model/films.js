@@ -37,13 +37,16 @@ export default class Films extends AbstractObserver{
       throw new Error('Can\'t update unexisting film');
     }
 
-    this._films = [
-      ...this._films.slice(0, index),
-      update,
-      ...this._films.slice(index + 1),
-    ];
+    return this._api.updateFilm(update)
+      .then((response) => {
+        this._films = [
+          ...this._films.slice(0, index),
+          response,
+          ...this._films.slice(index + 1),
+        ];
 
-    this._notify(updateType, update);
+        this._notify(updateType, response);
+      });
   }
 
   static adaptToClient(film) {
@@ -96,7 +99,7 @@ export default class Films extends AbstractObserver{
           ['total_rating']: film.filmInfo.totalRating,
           release: {
             ...film.filmInfo.release,
-            ['release_country']: film.filmInfo.releaseCountry,
+            ['release_country']: film.filmInfo.release.releaseCountry,
           },
         },
         ['user_details']: {
@@ -107,9 +110,9 @@ export default class Films extends AbstractObserver{
       },
     );
 
-    delete adaptedFilm.filmInfo.id;
     delete adaptedFilm.filmInfo;
     delete adaptedFilm.userDetails;
+    delete adaptedFilm['film_info'].id;
     delete adaptedFilm['film_info'].originalTitle;
     delete adaptedFilm['film_info'].totalRating;
     delete adaptedFilm['film_info'].ageRating;
