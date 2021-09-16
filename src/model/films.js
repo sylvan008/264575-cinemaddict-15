@@ -1,9 +1,23 @@
 import AbstractObserver from '../utils/abstract-observer.js';
+import {UpdateType} from '../utils/const.js';
 
 export default class Films extends AbstractObserver{
-  constructor() {
+  constructor(api) {
     super();
+    this._api = api;
     this._films = [];
+
+    this._init();
+  }
+
+  _init() {
+    this._api.getFilms()
+      .then((films) => {
+        this.setFilms(UpdateType.INIT, films);
+      })
+      .catch(() => {
+        this.setFilms(UpdateType.INIT, []);
+      });
   }
 
   setFilms(updateType, filmsList) {
