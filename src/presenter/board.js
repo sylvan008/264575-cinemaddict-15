@@ -19,6 +19,7 @@ const PresenterListTypes = {
 
 export class Board {
   constructor(boardContainer, filmsModel, commentsModel, filtersModel) {
+    this._isInit = false;
     this._boardContainer = boardContainer;
     this._headerElement = boardContainer.querySelector('.header');
     this._mainElement = boardContainer.querySelector('.main');
@@ -42,22 +43,43 @@ export class Board {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
-
     this._userProfileComponent = null;
     this._sortMenuComponent = null;
     this._showMoreButtonComponent = null;
     this._allFilmListComponen = null;
     this._commentedFilmListComponent = null;
     this._topFilmListComponent = null;
+  }
 
-    this._filmsBoardComponent = new FilmsBoard();
+  get isInit() {
+    return this._isInit;
+  }
+
+  set isInit(initial) {
+    this._isInit = initial;
   }
 
   init() {
+    this.isInit = true;
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
+
+    this._filmsBoardComponent = new FilmsBoard();
     this._renderBoard();
+  }
+
+  destroy() {
+    this._filmsModel.removeObserver(this._handleModelEvent);
+    this._commentsModel.removeObserver(this._handleModelEvent);
+    this._filtersModel.removeObserver(this._handleModelEvent);
+
+    this._clearBoard({
+      resetRenderedCardCount: true,
+      resetSort: true,
+    });
+    remove(this._filmsBoardComponent);
+    this.isInit = false;
   }
 
   _getFilms(sortType = SortTypes.DEFAULT) {
@@ -220,9 +242,9 @@ export class Board {
   }
 
   _renderCard(presenterCollection, container, film, currentFilter) {
-    const MoviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
-    MoviePresenter.init(film, this._getComments(), currentFilter);
-    presenterCollection.set(film.filmInfo.id, MoviePresenter);
+    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
+    moviePresenter.init(film, this._getComments(), currentFilter);
+    presenterCollection.set(film.filmInfo.id, moviePresenter);
   }
 
   _renderCards(presenterCollection, listComponent, filmsList) {
@@ -265,7 +287,7 @@ export class Board {
     Object.values(this._presenters).forEach((collection) => {
       const film = collection.get(data.filmInfo.id);
       if (film) {
-        film.init(data, this._getComments());
+        film.init(data, this._getComments(), this._filterType);
       }
     });
   }

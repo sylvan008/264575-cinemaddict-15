@@ -43,11 +43,26 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+const MenuTypes = {
+  BOARD: 'BOARD',
+  STATISTICS: 'STATISTICS',
+};
+
+const StatisticFiltersTypes = {
+  ALL_TIME: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
 export {
   FilmListTypes,
   emotions,
   FilmControlTypes,
   FilterTypes,
   UserAction,
-  UpdateType
+  UpdateType,
+  MenuTypes,
+  StatisticFiltersTypes
 };
