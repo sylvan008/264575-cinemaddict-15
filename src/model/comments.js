@@ -1,17 +1,18 @@
 import AbstractObserver from '../utils/abstract-observer.js';
 
 export default class CommentsModel extends AbstractObserver {
-  constructor() {
+  constructor(api) {
     super();
+    this._api = api;
     this._comments = [];
   }
 
-  set comments(commentsList) {
-    this._comments = commentsList;
-  }
-
-  get comments() {
-    return this._comments;
+  getComments(filmId) {
+    return this._api.getComments(filmId)
+      .then((comments) => {
+        this._comments = comments;
+        return this._comments;
+      });
   }
 
   addComment(data) {

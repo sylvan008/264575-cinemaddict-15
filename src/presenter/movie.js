@@ -22,8 +22,9 @@ const Mode = {
  * @param {function} changeMode
  */
 export default class Movie {
-  constructor(cardListContainer, changeData, changeMode) {
+  constructor(cardListContainer, changeData, changeMode, getComments) {
     this._mode = Mode.DEFAULT;
+    this._getComments = getComments;
     this._cardListContainer = cardListContainer;
     this._changeData = (...args) => {
       this._saveScroll();
@@ -45,10 +46,10 @@ export default class Movie {
     this._handleCommentDelete = this._handleCommentDelete.bind(this);
   }
 
-  init(film, comments, activeFilter) {
+  init(film, activeFilter) {
     const prevFilmCardComponent = this._filmCardComponent;
     this._film = film;
-    this._comments = comments;
+    this._comments = [];
     this._activeFilter = activeFilter;
 
     this._createFilmCardComponent(this._film);
@@ -97,7 +98,7 @@ export default class Movie {
 
   _createFilmPopupComponent(film) {
     this._popupComponent = new PopupView(film);
-    this._renderPopupComments(this._getFilmComments());
+    this._renderPopupComments(this._comments);
 
     this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
     this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
@@ -122,14 +123,14 @@ export default class Movie {
     this.resetView();
   }
 
-  _getFilmComments() {
-    return this._film.comments.map((movieCommentId) => this._comments.find(({id}) => id === movieCommentId));
-  }
-
   _handleFilmCardClick() {
-    this._changeMode();
-    this._renderPopupComponent();
-    this._mode = Mode.OPEN;
+    this._getComments(this._film.filmInfo.id)
+      .then((comments) => {
+        this._comments = comments;
+        this._changeMode();
+        this._renderPopupComponent();
+        this._mode = Mode.OPEN;
+      });
   }
 
   _handlePopupCloseButtonClick() {

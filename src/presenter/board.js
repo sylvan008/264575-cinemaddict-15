@@ -44,6 +44,7 @@ export class Board {
     this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._getComments = this._getComments.bind(this);
 
     this._userProfileComponent = null;
     this._sortMenuComponent = null;
@@ -103,8 +104,9 @@ export class Board {
     }
   }
 
-  _getComments() {
-    return this._commentsModel.comments;
+  _getComments(filmId) {
+    return this._commentsModel.getComments(filmId)
+      .then((comments) => comments);
   }
 
   _clearBoard({resetRenderedCardCount = false, resetSort = false} = {}) {
@@ -250,8 +252,8 @@ export class Board {
   }
 
   _renderCard(presenterCollection, container, film, currentFilter) {
-    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
-    moviePresenter.init(film, this._getComments(), currentFilter);
+    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange, this._getComments);
+    moviePresenter.init(film, currentFilter);
     presenterCollection.set(film.filmInfo.id, moviePresenter);
   }
 

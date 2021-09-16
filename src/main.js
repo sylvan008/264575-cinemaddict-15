@@ -20,7 +20,7 @@ const api = new Api(END_POINT, AUTHORIZATION);
 
 const filtersModel = new FiltersModel();
 const filmsModel = new FilmsModel();
-const commentsModel = new CommentsModel();
+const commentsModel = new CommentsModel(api);
 
 const boardPresenter = new Board(pageElement, filmsModel, commentsModel, filtersModel);
 boardPresenter.init();
