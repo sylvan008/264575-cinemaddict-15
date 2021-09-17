@@ -19,7 +19,15 @@ export default class CommentsModel extends AbstractObserver {
     this._comments.push(data);
   }
 
-  deleteComment(id) {
-    this._comments = this._comments.filter((comment) => comment.id !== id);
+  deleteComment(updateType, update) {
+    const {commentId, film} = update;
+    const comments = film.comments.filter((id) => id !== commentId);
+    return this._api.deleteComment(commentId)
+      .then(() => {
+        this._notify(updateType, Object.assign({}, {
+          ...film,
+          comments,
+        }));
+      });
   }
 }

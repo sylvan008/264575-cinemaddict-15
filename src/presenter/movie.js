@@ -171,16 +171,13 @@ export default class Movie {
   }
 
   _handleCommentDelete(commentId) {
-    const comments = this._film.comments.filter((id) => id !== commentId);
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      commentId,
-    );
-    this._changeData(
-      UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      Object.assign({}, this._film, {comments}),
+      {
+        commentId,
+        film: this._film,
+      },
     );
   }
 
