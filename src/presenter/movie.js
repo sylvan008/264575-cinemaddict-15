@@ -98,14 +98,18 @@ export default class Movie {
 
   _createFilmPopupComponent(film) {
     this._popupComponent = new PopupView(film);
-    this._renderPopupComments(this._comments);
 
     this._popupComponent.setCloseHandler(this._handlePopupCloseButtonClick);
     this._popupComponent.setAddFilmToFavoriteHandler(this._handleAddToFavoriteButtonClick);
     this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
     this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
 
-    this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
+    this._getComments(this._film.filmInfo.id)
+      .then((comments) => {
+        this._comments = comments;
+        this._renderPopupComments(this._comments);
+        this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
+      });
   }
 
   _disableBodyOverflow() {
@@ -124,13 +128,9 @@ export default class Movie {
   }
 
   _handleFilmCardClick() {
-    this._getComments(this._film.filmInfo.id)
-      .then((comments) => {
-        this._comments = comments;
-        this._changeMode();
-        this._renderPopupComponent();
-        this._mode = Mode.OPEN;
-      });
+    this._changeMode();
+    this._mode = Mode.OPEN;
+    this._renderPopupComponent();
   }
 
   _handlePopupCloseButtonClick() {
