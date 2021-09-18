@@ -4,7 +4,7 @@ import {Board} from './presenter/board.js';
 import Filter from './presenter/filter.js';
 import FooterStatisticsView from './view/footer-statistics.js';
 import StatisticView from './view/statistic.js';
-import {MenuTypes} from './utils/const.js';
+import {MenuTypes, UpdateType} from './utils/const.js';
 import {remove, render} from './utils/render.js';
 import CommentsModel from './model/comments.js';
 import Api from './api.js';
@@ -48,4 +48,12 @@ const handleSiteMenuClick = (menuType) => {
 const filtersPresenter = new Filter(mainElement, filtersModel, filmsModel, handleSiteMenuClick);
 filtersPresenter.init();
 
-render(footerStatisticsElement, new FooterStatisticsView(filmsModel.films.length));
+const renderFooterStatistic = (updateType) => {
+  if (updateType === UpdateType.INIT) {
+    render(footerStatisticsElement, new FooterStatisticsView(filmsModel.films.length));
+    filmsModel.removeObserver(renderFooterStatistic);
+  }
+};
+
+filmsModel.addObserver(renderFooterStatistic);
+
