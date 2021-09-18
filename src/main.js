@@ -2,6 +2,7 @@ import FilmsModel from './model/films.js';
 import FiltersModel from './model/filters.js';
 import {Board} from './presenter/board.js';
 import Filter from './presenter/filter.js';
+import User from './presenter/user.js';
 import FooterStatisticsView from './view/footer-statistics.js';
 import StatisticView from './view/statistic.js';
 import {MenuTypes, UpdateType} from './utils/const.js';
@@ -15,12 +16,16 @@ const AUTHORIZATION = 'Basic gjoo9fvs4njdfsii49hck439!';
 const pageElement = document.querySelector('body');
 const footerStatisticsElement = document.querySelector('.footer__statistics');
 const mainElement = pageElement.querySelector('.main');
+const headerElement = pageElement.querySelector('.header');
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const filtersModel = new FiltersModel();
 const filmsModel = new FilmsModel(api);
 const commentsModel = new CommentsModel(api);
+
+const userProfilePresenter = new User(headerElement, filmsModel);
+userProfilePresenter.init();
 
 const boardPresenter = new Board(pageElement, filmsModel, commentsModel, filtersModel);
 boardPresenter.init();
