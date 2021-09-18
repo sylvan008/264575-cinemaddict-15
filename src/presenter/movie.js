@@ -3,9 +3,8 @@ import PopupView from '../view/popup.js';
 import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
 import {remove, render, replace} from '../utils/render.js';
-import {getId, isEscapeKey} from '../utils/common.js';
+import {isEscapeKey} from '../utils/common.js';
 import {FilterTypes, UpdateType, UserAction} from '../utils/const.js';
-import {getDateNow} from '../utils/date.js';
 
 const START_SCROLL = 0;
 const HIDE_OVERFLOW = 'hide-overflow';
@@ -104,12 +103,9 @@ export default class Movie {
     this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
     this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
 
-    this._getComments(this._film.filmInfo.id)
-      .then((comments) => {
-        this._comments = comments;
-        this._renderPopupComments(this._comments);
-        this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
-      });
+
+    this._renderPopupComments(this._comments);
+    this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
   }
 
   _disableBodyOverflow() {
@@ -129,6 +125,7 @@ export default class Movie {
 
   _handleFilmCardClick() {
     this._changeMode();
+
     this._mode = Mode.OPEN;
     this._renderPopupComponent();
   }
@@ -182,42 +179,35 @@ export default class Movie {
   }
 
   _handleCommentSubmit(newComment) {
-    const comment = Object.assign({}, newComment, {
-      id: getId(),
-      date: getDateNow(),
-      author: 'Keks', // TODO Вставить имя пользователя
-    });
     this._changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      comment,
-    );
-    this._changeData(
-      UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      Object.assign({}, this._film, {
-        comments: [
-          ...this._film.comments,
-          comment.id,
-        ],
-      }),
+      {
+        newComment,
+        film: this._film,
+      },
     );
   }
 
   _renderPopupComponent() {
-    const prevElement = this._popupComponent;
-    this._createFilmPopupComponent(this._film);
+    this._getComments(this._film.filmInfo.id)
+      .then((comments) => {
+        this._comments = comments;
 
-    if (prevElement !== null) {
-      replace(this._popupComponent, prevElement);
-      remove(prevElement);
-    } else {
-      render(document.body, this._popupComponent);
-    }
+        const prevElement = this._popupComponent;
+        this._createFilmPopupComponent(this._film);
 
-    this._popupComponent.getElement().scrollTop = this._scrollTop;
-    document.addEventListener('keydown', this._escKeyDownHandler);
-    this._disableBodyOverflow();
+        if (prevElement !== null) {
+          replace(this._popupComponent, prevElement);
+          remove(prevElement);
+        } else {
+          render(document.body, this._popupComponent);
+        }
+
+        this._popupComponent.getElement().scrollTop = this._scrollTop;
+        document.addEventListener('keydown', this._escKeyDownHandler);
+        this._disableBodyOverflow();
+      });
   }
 
   _renderPopupComments(comments) {

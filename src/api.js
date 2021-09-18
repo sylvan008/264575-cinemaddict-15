@@ -26,7 +26,7 @@ export default class Api {
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then((response) => Api.toJSON(response))
-      .then(FilmsModel.adaptToClient);
+      .then((data) => Object.assign({}, data, {movie: FilmsModel.adaptToClient(data.movie)}));
   }
 
   deleteComment(commentId) {
