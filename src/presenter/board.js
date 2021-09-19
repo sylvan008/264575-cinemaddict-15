@@ -245,6 +245,11 @@ export class Board {
       return;
     }
 
+    if (!this._getFilms().length) {
+      this._renderNoFilms();
+      return;
+    }
+
     this._renderSortMenu();
     this._renderAllFilmList();
     this._renderCommentedFilmList();
