@@ -61,7 +61,7 @@ const tableDetailsModel = [
   },
   {
     title: 'Country',
-    key: 'release.country',
+    key: 'country',
   },
   {
     title: 'Runtime',
@@ -104,7 +104,7 @@ export const createPopupTemplate = ({filmInfo, userDetails}) => {
     writers: filmInfo.writers,
     actors: filmInfo.actors,
     date: filmInfo.release.date,
-    country: filmInfo.release.country,
+    country: filmInfo.release.releaseCountry,
     runtime: filmInfo.runtime,
     genre: filmInfo.genre,
   };

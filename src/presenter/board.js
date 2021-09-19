@@ -4,6 +4,7 @@ import FilmListView from '../view/film-list.js';
 import NoFilmView from '../view/no-film.js';
 import ShowMoreButtonView from '../view/show-more.js';
 import SortMenu from '../view/sort-menu.js';
+import LoadingView from '../view/loading.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {FilmListTypes, UpdateType, UserAction} from '../utils/const.js';
 import {sortFilmByComments, sortFilmByDate, sortFilmByRating, SortTypes} from '../utils/sort.js';
@@ -20,6 +21,7 @@ const PresenterListTypes = {
 export class Board {
   constructor(boardContainer, filmsModel, commentsModel, filtersModel) {
     this._isInit = false;
+    this._isLoading = true;
     this._boardContainer = boardContainer;
     this._headerElement = boardContainer.querySelector('.header');
     this._mainElement = boardContainer.querySelector('.main');
@@ -42,6 +44,7 @@ export class Board {
     this._handleShowMoreButtonCLick = this._handleShowMoreButtonCLick.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._getComments = this._getComments.bind(this);
 
     this._userProfileComponent = null;
     this._sortMenuComponent = null;
@@ -49,6 +52,7 @@ export class Board {
     this._allFilmListComponen = null;
     this._commentedFilmListComponent = null;
     this._topFilmListComponent = null;
+    this._loadingComponent = new LoadingView();
   }
 
   get isInit() {
@@ -66,6 +70,7 @@ export class Board {
     this._filtersModel.addObserver(this._handleModelEvent);
 
     this._filmsBoardComponent = new FilmsBoard();
+    this._renderFilmsBoard();
     this._renderBoard();
   }
 
@@ -99,8 +104,9 @@ export class Board {
     }
   }
 
-  _getComments() {
-    return this._commentsModel.comments;
+  _getComments(filmId) {
+    return this._commentsModel.getComments(filmId)
+      .then((comments) => comments);
   }
 
   _clearBoard({resetRenderedCardCount = false, resetSort = false} = {}) {
@@ -149,6 +155,11 @@ export class Board {
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetRenderedCardCount: true, resetSort: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderBoard();
         break;
     }
@@ -229,9 +240,8 @@ export class Board {
   }
 
   _renderBoard() {
-    this._renderFilmsBoard();
-    if (!this._getFilms().length) {
-      this._renderNoFilms();
+    if (this._isLoading) {
+      this._renderLoading();
       return;
     }
 
@@ -242,8 +252,8 @@ export class Board {
   }
 
   _renderCard(presenterCollection, container, film, currentFilter) {
-    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange);
-    moviePresenter.init(film, this._getComments(), currentFilter);
+    const moviePresenter = new Movie(container, this._handleViewAction, this._handleModeChange, this._getComments);
+    moviePresenter.init(film, currentFilter);
     presenterCollection.set(film.filmInfo.id, moviePresenter);
   }
 
@@ -254,6 +264,10 @@ export class Board {
 
   _renderFilmsBoard() {
     render(this._mainElement, this._filmsBoardComponent);
+  }
+
+  _renderLoading() {
+    render(this._filmsBoardComponent, this._loadingComponent);
   }
 
   _renderNoFilms() {
@@ -287,7 +301,7 @@ export class Board {
     Object.values(this._presenters).forEach((collection) => {
       const film = collection.get(data.filmInfo.id);
       if (film) {
-        film.init(data, this._getComments(), this._filterType);
+        film.init(data, this._filterType);
       }
     });
   }
