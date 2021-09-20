@@ -3,15 +3,20 @@ import PopupView from '../view/popup.js';
 import CommentsView from '../view/comments.js';
 import NewCommentView from '../view/new-comment.js';
 import {remove, render, replace} from '../utils/render.js';
-import {getId, isEscapeKey} from '../utils/common.js';
+import {isEscapeKey} from '../utils/common.js';
 import {FilterTypes, UpdateType, UserAction} from '../utils/const.js';
-import {getDateNow} from '../utils/date.js';
 
 const START_SCROLL = 0;
 const HIDE_OVERFLOW = 'hide-overflow';
 const Mode = {
   OPEN: 'open',
   DEFAULT: 'default',
+};
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING_DELETE: 'ABORTING_DELEtE',
+  ABORTING_SAVE: 'ABORTING_SAVE',
 };
 
 /**
@@ -23,6 +28,7 @@ const Mode = {
  */
 export default class Movie {
   constructor(cardListContainer, changeData, changeMode, getComments) {
+    this._deleteCommentId = null;
     this._mode = Mode.DEFAULT;
     this._getComments = getComments;
     this._cardListContainer = cardListContainer;
@@ -88,6 +94,31 @@ export default class Movie {
     }
   }
 
+  setViewState(mode) {
+    if (this._popupComponent === null) {
+      return;
+    }
+    switch (mode) {
+      case State.SAVING:
+        this._newCommentComponent.updateData({isSaving: true, isDisabled: true});
+        break;
+      case State.DELETING:
+        remove(this._popupComments);
+        this._renderPopupComments(this._comments, {isDisabled: true, isDeleting: true, deleteCommentId: this._deleteCommentId});
+        break;
+      case State.ABORTING_SAVE:
+        this._newCommentComponent.updateData({isSaving: true, isDisabled: false});
+        this._newCommentComponent.shake();
+        break;
+      case State.ABORTING_DELETE:
+        remove(this._popupComments);
+        this._renderPopupComments(this._comments);
+        render(this._popupComments, this._newCommentComponent);
+        this._popupComponent.shake();
+        break;
+    }
+  }
+
   _createFilmCardComponent(film) {
     this._filmCardComponent = new FilmCardView(film);
     this._filmCardComponent.setCardOpenHandler(this._handleFilmCardClick);
@@ -104,12 +135,9 @@ export default class Movie {
     this._popupComponent.setAddFilmToHistoryHandler(this._handleAddToHistoryButtonClick);
     this._popupComponent.setAddFilmToWatchlistHandler(this._handleAddToWatchlistButtonClick);
 
-    this._getComments(this._film.filmInfo.id)
-      .then((comments) => {
-        this._comments = comments;
-        this._renderPopupComments(this._comments);
-        this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
-      });
+
+    this._renderPopupComments(this._comments);
+    this._renderNewComment(this._popupComponent.getElement().querySelector('.film-details__inner'));
   }
 
   _disableBodyOverflow() {
@@ -129,6 +157,7 @@ export default class Movie {
 
   _handleFilmCardClick() {
     this._changeMode();
+
     this._mode = Mode.OPEN;
     this._renderPopupComponent();
   }
@@ -171,63 +200,58 @@ export default class Movie {
   }
 
   _handleCommentDelete(commentId) {
-    const comments = this._film.comments.filter((id) => id !== commentId);
+    this._deleteCommentId = commentId;
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      commentId,
-    );
-    this._changeData(
-      UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      Object.assign({}, this._film, {comments}),
+      {
+        commentId,
+        film: this._film,
+      },
     );
   }
 
   _handleCommentSubmit(newComment) {
-    const comment = Object.assign({}, newComment, {
-      id: getId(),
-      date: getDateNow(),
-      author: 'Keks', // TODO Вставить имя пользователя
-    });
     this._changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      comment,
-    );
-    this._changeData(
-      UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      Object.assign({}, this._film, {
-        comments: [
-          ...this._film.comments,
-          comment.id,
-        ],
-      }),
+      {
+        newComment,
+        film: this._film,
+      },
     );
   }
 
   _renderPopupComponent() {
-    const prevElement = this._popupComponent;
-    this._createFilmPopupComponent(this._film);
+    this._getComments(this._film.filmInfo.id)
+      .then((comments) => {
+        this._comments = comments;
 
-    if (prevElement !== null) {
-      replace(this._popupComponent, prevElement);
-      remove(prevElement);
-    } else {
-      render(document.body, this._popupComponent);
-    }
+        const prevElement = this._popupComponent;
+        this._createFilmPopupComponent(this._film);
 
-    this._popupComponent.getElement().scrollTop = this._scrollTop;
-    document.addEventListener('keydown', this._escKeyDownHandler);
-    this._disableBodyOverflow();
+        if (prevElement !== null) {
+          replace(this._popupComponent, prevElement);
+          remove(prevElement);
+        } else {
+          render(document.body, this._popupComponent);
+        }
+
+        this._popupComponent.getElement().scrollTop = this._scrollTop;
+        document.addEventListener('keydown', this._escKeyDownHandler);
+        this._disableBodyOverflow();
+      })
+      .catch(() => {
+        this._mode = Mode.DEFAULT;
+      });
   }
 
-  _renderPopupComments(comments) {
+  _renderPopupComments(comments, state = {isDisabled: false, isDeleting: false, deleteCommentId: null}) {
+    const {isDisabled, isDeleting, deleteCommentId} = state;
     const filmDetailBottomContainer = this._popupComponent.getElement()
       .querySelector('.film-details__bottom-container');
 
-    this._popupComments = new CommentsView(comments);
+    this._popupComments = new CommentsView(comments, isDisabled, isDeleting, deleteCommentId);
     this._popupComments.setCommentDeleteHandler(this._handleCommentDelete);
     render(filmDetailBottomContainer, this._popupComments);
   }
@@ -235,8 +259,7 @@ export default class Movie {
   _renderNewComment(formElement) {
     this._newCommentComponent = new NewCommentView(formElement);
     this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
-    const commentsContainer = formElement.querySelector('.film-details__comments-wrap');
-    render(commentsContainer, this._newCommentComponent);
+    render(this._popupComments, this._newCommentComponent);
   }
 
   _setCurrentTypeUpdate(filterType) {

@@ -15,11 +15,24 @@ export default class CommentsModel extends AbstractObserver {
       });
   }
 
-  addComment(data) {
-    this._comments.push(data);
+  addComment(updateType, update) {
+    const {newComment, film} = update;
+    return this._api.addComment(film.filmInfo.id, newComment)
+      .then((data) => {
+        this._comments = data.comments;
+        this._notify(updateType, data.movie);
+      });
   }
 
-  deleteComment(id) {
-    this._comments = this._comments.filter((comment) => comment.id !== id);
+  deleteComment(updateType, update) {
+    const {commentId, film} = update;
+    const comments = film.comments.filter((id) => id !== commentId);
+    return this._api.deleteComment(commentId)
+      .then(() => {
+        this._notify(updateType, Object.assign({}, {
+          ...film,
+          comments,
+        }));
+      });
   }
 }

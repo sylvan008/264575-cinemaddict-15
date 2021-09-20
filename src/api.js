@@ -18,6 +18,24 @@ export default class Api {
     this._authorization = authorization;
   }
 
+  addComment(filmId, comment) {
+    return this._load({
+      url: `comments/${filmId}`,
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then((response) => Api.toJSON(response))
+      .then((data) => Object.assign({}, data, {movie: FilmsModel.adaptToClient(data.movie)}));
+  }
+
+  deleteComment(commentId) {
+    return this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE,
+    });
+  }
+
   getFilms() {
     return this._load({url: 'movies'})
       .then(Api.toJSON)

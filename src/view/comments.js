@@ -20,7 +20,7 @@ const getCommentDate = (date, dayDifference) => {
   }
 };
 
-const createCommentItem = ({author, comment, date, emotion, id}) => {
+const createCommentItem = ({author, comment, date, emotion, id}, isDisabled, isDeleting, deleteCommentID) => {
   const commentDate = getCommentDate(date, getDateDifferenceFromNow(date));
   return `
     <li class="film-details__comment">
@@ -32,7 +32,9 @@ const createCommentItem = ({author, comment, date, emotion, id}) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}" ${isDisabled ? 'disabled' : ''}>
+            ${isDeleting && id === deleteCommentID ? 'Deleting' : 'Delete'}
+          </button>
         </p>
       </div>
     </li>
@@ -43,12 +45,12 @@ const createCommentItem = ({author, comment, date, emotion, id}) => {
  * @param {comment[]} comments
  * @return {string} HTML template
  */
-const createCommentsTemplate = (comments) =>
+const createCommentsTemplate = (comments, isDisabled, isDeleting, deleteCommentID) =>
   `<section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
       <ul class="film-details__comments-list">
-        ${comments.map(createCommentItem).join('')}
+        ${comments.map((comment) => createCommentItem(comment, isDisabled, isDeleting, deleteCommentID)).join('')}
       </ul>
     </section>
   `;
@@ -57,13 +59,16 @@ export default class Comments extends AbstractComponent {
   /**
    * @param {comment[]} comments
    */
-  constructor(comments) {
+  constructor(comments, isDisabled = false, isDeleting = false, deleteCommentID = null) {
     super();
     /**
      * @type {comment[]}
      * @private
      */
     this._comments = comments;
+    this._isDisabled = isDisabled;
+    this._isDeleting = isDeleting;
+    this._deleteCommentID = deleteCommentID;
 
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
   }
@@ -72,7 +77,7 @@ export default class Comments extends AbstractComponent {
    * @return {string}
    */
   getTemplate() {
-    return createCommentsTemplate(this._comments);
+    return createCommentsTemplate(this._comments, this._isDisabled, this._isDeleting, this._deleteCommentID);
   }
 
   _commentDeleteHandler(evt) {
