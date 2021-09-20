@@ -12,6 +12,12 @@ const Mode = {
   OPEN: 'open',
   DEFAULT: 'default',
 };
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING_DELETE: 'ABORTING_DELEtE',
+  ABORTING_SAVE: 'ABORTING_SAVE',
+};
 
 /**
  * Create new film card
@@ -22,6 +28,7 @@ const Mode = {
  */
 export default class Movie {
   constructor(cardListContainer, changeData, changeMode, getComments) {
+    this._deleteCommentId = null;
     this._mode = Mode.DEFAULT;
     this._getComments = getComments;
     this._cardListContainer = cardListContainer;
@@ -84,6 +91,31 @@ export default class Movie {
       this._enableBodyOverflow();
       this._mode = Mode.DEFAULT;
       this._scrollTop = START_SCROLL;
+    }
+  }
+
+  setViewState(mode) {
+    if (this._popupComponent === null) {
+      return;
+    }
+    switch (mode) {
+      case State.SAVING:
+        this._newCommentComponent.updateData({isSaving: true, isDisabled: true});
+        break;
+      case State.DELETING:
+        remove(this._popupComments);
+        this._renderPopupComments(this._comments, {isDisabled: true, isDeleting: true, deleteCommentId: this._deleteCommentId});
+        break;
+      case State.ABORTING_SAVE:
+        this._newCommentComponent.updateData({isSaving: true, isDisabled: false});
+        this._newCommentComponent.shake();
+        break;
+      case State.ABORTING_DELETE:
+        remove(this._popupComments);
+        this._renderPopupComments(this._comments);
+        render(this._popupComments, this._newCommentComponent);
+        this._popupComponent.shake();
+        break;
     }
   }
 
@@ -168,6 +200,7 @@ export default class Movie {
   }
 
   _handleCommentDelete(commentId) {
+    this._deleteCommentId = commentId;
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -207,14 +240,18 @@ export default class Movie {
         this._popupComponent.getElement().scrollTop = this._scrollTop;
         document.addEventListener('keydown', this._escKeyDownHandler);
         this._disableBodyOverflow();
+      })
+      .catch(() => {
+        this._mode = Mode.DEFAULT;
       });
   }
 
-  _renderPopupComments(comments) {
+  _renderPopupComments(comments, state = {isDisabled: false, isDeleting: false, deleteCommentId: null}) {
+    const {isDisabled, isDeleting, deleteCommentId} = state;
     const filmDetailBottomContainer = this._popupComponent.getElement()
       .querySelector('.film-details__bottom-container');
 
-    this._popupComments = new CommentsView(comments);
+    this._popupComments = new CommentsView(comments, isDisabled, isDeleting, deleteCommentId);
     this._popupComments.setCommentDeleteHandler(this._handleCommentDelete);
     render(filmDetailBottomContainer, this._popupComments);
   }
@@ -222,8 +259,7 @@ export default class Movie {
   _renderNewComment(formElement) {
     this._newCommentComponent = new NewCommentView(formElement);
     this._newCommentComponent.setFormSubmitHandler(this._handleCommentSubmit);
-    const commentsContainer = formElement.querySelector('.film-details__comments-wrap');
-    render(commentsContainer, this._newCommentComponent);
+    render(this._popupComments, this._newCommentComponent);
   }
 
   _setCurrentTypeUpdate(filterType) {

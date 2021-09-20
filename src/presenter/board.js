@@ -1,4 +1,4 @@
-import Movie from './movie.js';
+import Movie, {State as MoviePresenterViewState} from './movie.js';
 import FilmsBoard from '../view/films-board.js';
 import FilmListView from '../view/film-list.js';
 import NoFilmView from '../view/no-film.js';
@@ -136,10 +136,22 @@ export class Board {
         this._filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
+        this._findFilmPresenters(update.film.filmInfo.id)
+          .forEach((film) => film.setViewState(MoviePresenterViewState.DELETING));
+        this._commentsModel.deleteComment(updateType, update)
+          .catch(() => {
+            this._findFilmPresenters(update.film.filmInfo.id)
+              .forEach((film) => film.setViewState(MoviePresenterViewState.ABORTING_DELETE));
+          });
         break;
       case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
+        this._findFilmPresenters(update.film.filmInfo.id)
+          .forEach((film) => film.setViewState(MoviePresenterViewState.SAVING));
+        this._commentsModel.addComment(updateType, update)
+          .catch(() => {
+            this._findFilmPresenters(update.film.filmInfo.id)
+              .forEach((film) => film.setViewState(MoviePresenterViewState.ABORTING_SAVE));
+          });
         break;
     }
   }
@@ -302,12 +314,19 @@ export class Board {
     render(this._allFilmListComponent, this._showMoreButtonComponent);
   }
 
-  _updatePresenters(data) {
+  _findFilmPresenters(filmId) {
+    const filmPresenters = [];
     Object.values(this._presenters).forEach((collection) => {
-      const film = collection.get(data.filmInfo.id);
+      const film = collection.get(filmId);
       if (film) {
-        film.init(data, this._filterType);
+        filmPresenters.push(film);
       }
     });
+    return filmPresenters;
+  }
+
+  _updatePresenters(data) {
+    this._findFilmPresenters(data.filmInfo.id)
+      .forEach((film) => film.init(data, this._filterType));
   }
 }

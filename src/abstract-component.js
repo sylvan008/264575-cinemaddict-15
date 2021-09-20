@@ -1,5 +1,8 @@
 import {createElement} from './utils/render.js';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+const SHAKE_CLASS = 'shake';
+
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
@@ -44,5 +47,10 @@ export default class AbstractComponent {
    */
   removeElement() {
     this._element = null;
+  }
+
+  shake() {
+    this.getElement().classList.add(SHAKE_CLASS);
+    setTimeout(() => this.getElement().classList.remove(SHAKE_CLASS), SHAKE_ANIMATION_TIMEOUT);
   }
 }
