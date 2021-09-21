@@ -1,4 +1,3 @@
-import {nanoid} from 'nanoid';
 import he from 'he';
 
 const EDGE_NOVICE = 10;
@@ -13,8 +12,6 @@ const getRandomInteger = (a = 0, b = 1) => {
 const getRandomArrayElement = (array) => array[getRandomInteger(0, array.length - 1)];
 
 const isEscapeKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
-
-const getId = () => nanoid();
 
 const encodeUnsafeSymbols = (str) => he.encode(str);
 
@@ -32,7 +29,6 @@ export {
   getRandomInteger,
   getRandomArrayElement,
   isEscapeKey,
-  getId,
   encodeUnsafeSymbols,
   getUserRank
 };
