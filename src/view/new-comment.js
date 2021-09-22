@@ -121,10 +121,8 @@ export default class NewComment extends SmartComponent {
     if (this._data.emotion === null) {
       return false;
     }
-    if (this._data.comment.trim() === '') {
-      return false;
-    }
-    return true;
+
+    return this._data.comment.trim() === '';
   }
 
   _submitFormHandler() {
