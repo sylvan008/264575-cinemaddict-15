@@ -9,8 +9,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const getRandomArrayElement = (array) => array[getRandomInteger(0, array.length - 1)];
-
 const isEscapeKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 const encodeUnsafeSymbols = (str) => he.encode(str);
@@ -27,7 +25,6 @@ const getUserRank = (watchedFilmsCount) => {
 
 export {
   getRandomInteger,
-  getRandomArrayElement,
   isEscapeKey,
   encodeUnsafeSymbols,
   getUserRank
