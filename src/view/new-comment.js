@@ -122,7 +122,7 @@ export default class NewComment extends SmartComponent {
       return false;
     }
 
-    return this._data.comment.trim() === '';
+    return this._data.comment.trim() !== '';
   }
 
   _submitFormHandler() {
